@@ -8,7 +8,7 @@ TEST_SRC = *.cc
 OBJ = $(SRC:.cc=.o)
 
 ifeq ($(OS), Linux)
-	LIBS += -lgmock -pthread
+	LIBS += #-lgmock -pthread
 endif
 
 all: clean valgrind
