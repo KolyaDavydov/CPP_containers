@@ -13,6 +13,18 @@ endif
 
 all: clean valgrind
 
+# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ПРОВЕРКИ КОМПИЛЯЦИИ tree.h
+main: clean
+	$(GCC) main.cpp -o main
+	./main
+# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ТЕСТИРОВАНИЯ tree.h
+mt: clean
+	$(GCC) tree_test.cc -o test $(LIBS)
+	./test
+# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ УТЕЧЕК tree.h
+vt: clean mt
+	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --log-file=RESULT_VALGRIND.txt ./test
+
 test: clean
 	$(GCC) $(TEST_SRC) -o test $(LIBS)
 	./test --gtest_repeat=10 --gtest_break_on_failure
@@ -44,4 +56,5 @@ clean:
 	rm -rf *.dSYM
 	rm -rf *.gcno
 	rm -rf RESULT_VALGRIND.txt
+	rm -rf main
 
