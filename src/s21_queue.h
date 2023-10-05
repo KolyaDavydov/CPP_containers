@@ -2,79 +2,54 @@
 #define CPP2_SRC_S21_QUEUE_H_
 
 #include "stdexcept"
+#include <initializer_list>
+#include "s21_list.h"
 
 namespace s21 {
 
-    template<typename T>
+    template<typename T, typename Container = s21::List<T>>
     class Queue {
 
     public:
         // attributes
-        using value_type = T;
-        using reference = value_type &;
-        using const_reference = const value_type &;
-        using size_type = std::size_t;
+        using value_type = typename Container::size_type;
+        using reference = typename Container::reference;
+        using const_reference = typename Container::const_reference;
+        using size_type = typename Container::size_type;
 
-        Queue(): qSize(0) {
-            carbineNode = new Node(value_type());
-            carbineNode->next = carbineNode;
-            carbineNode->prev = carbineNode;
+        Queue() {
+            container();
         }
 
         Queue(std::initializer_list<value_type> const &items) : Queue() {
-            for (const_reference item: items) {
-                push_back(item);
-            }
+            container(items);
         }
 
         Queue(const Queue &q) : Queue() {
-            for (const_reference item: q) {
-                push_back(item);
-            }
+            container(q);
         }
 
         Queue(Queue &&q) noexcept: Queue() {
-            qSize = q.qSize;
-            q.qSize = 0;
-            std::swap(carbineNode, q.carbineNode);
+            container(q);
         }
 
-        /*
-        Replaces the contents of the container.
-        */
-        void clear() {
-            Node *currentNode = carbineNode->next; // первая нода
-            while (currentNode != carbineNode) {
-                Node *temp = currentNode;
-                currentNode = currentNode->next;
-                delete temp;
-            }
-            carbineNode->next = carbineNode;
-            carbineNode->prev = carbineNode;
-            qSize = 0;
-        }
 
-        Queue<T> &operator=(const Queue<T> &q) {
+        Queue<T, Container> &operator=(const Queue<T> &q) {
             if (this != &q) {
-                clear();
-                for (const_reference item: q) {
-                    push_back(item);
-                }
+                container = q.container;
             }
             return *this;
         }
 
-        Queue<T> &operator=(Queue<T> &&q) noexcept {
-            clear();
-            qSize = q.qSize;
-            q.lSize = 0;
-            std::swap(carbineNode, q.carbineNode);
+        Queue<T, Container> &operator=(Queue<T> &&q) noexcept {
+            if (this != &q) {
+                container = std::move(q.container);
+            }
             return *this;
         }
 
         ~Queue() {
-            clear();
-            delete carbineNode;
+            ~container();
         }
 
         /*
@@ -82,11 +57,11 @@ namespace s21 {
             Calling front on an empty container causes undefined behavior.
              */
         reference front() {
-            return carbineNode->next->value;
+            return container.front();
         }
 
         const_reference front() const {
-            return carbineNode->next->value;
+            return container.front();
         }
 
         /*
@@ -94,39 +69,46 @@ namespace s21 {
         Calling back on an empty container causes undefined behavior.
          */
         reference back() {
-            return carbineNode->prev->value;
+            return container.back();
         }
 
         const_reference back() const {
-            return carbineNode->prev->value;
+            return container.back();
         }
 
         /*
         Checks if the container has no elements.
         */
         bool empty() const noexcept {
-            return carbineNode->next == carbineNode;
+            return container.empty();
         }
 
         /*
         Returns the number of elements in the container.
         */
         size_type size() const noexcept {
-            return qSize;
+            return container.size();
+        }
+
+        void push(const_reference value) {
+           container.push_back(value);
+        }
+
+        void pop() {
+            container.pop_front();
+        }
+
+        /*
+        Exchanges the contents of the container with those of other. Does not invoke any move, copy, or swap operations
+        on individual elements.
+         */
+        void swap(Queue<T> &other) {
+            container.swap(other);
         }
 
 
     private:
-        struct Node {
-            value_type value;
-            Node *prev;
-            Node *next;
-
-            explicit Node(const_reference value) : value(value), prev(nullptr), next(nullptr) {}
-        };
-
-        Node *carbineNode;
-        size_type qSize;
+        Container container;
     };
 }
 
