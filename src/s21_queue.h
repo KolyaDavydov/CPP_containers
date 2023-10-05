@@ -40,9 +40,9 @@ namespace s21 {
         }
 
         Queue<T, Container> &operator=(Queue &&q) noexcept {
-            if (this != &q) {
-                container = std::move(q.container);
-            }
+          //  if (this != &q) { //  по сути эта проверка бессмысленна, перемещение самого себя приведет к уб и мы не должны от этого защищать
+                container = q.container;
+          //  }
             return *this;
         }
 
@@ -56,19 +56,11 @@ namespace s21 {
             return container.front();
         }
 
-        const_reference front() const {
-            return container.front();
-        }
-
         /*
         Returns a reference to the last element in the container.
         Calling back on an empty container causes undefined behavior.
          */
         reference back() {
-            return container.back();
-        }
-
-        const_reference back() const {
             return container.back();
         }
 
@@ -95,11 +87,11 @@ namespace s21 {
         }
 
         /*
-        Exchanges the contents of the container with those of other. Does not invoke any move, copy, or swap operations
+        Exchanges the contents of the container with those of others. Does not invoke any move, copy, or swap operations
         on individual elements.
          */
-        void swap(Queue<T> &other) {
-            container.swap(other);
+        void swap(Queue &other) {
+            container.swap(other.container);
         }
 
 
