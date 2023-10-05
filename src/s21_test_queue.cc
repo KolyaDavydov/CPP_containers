@@ -5,8 +5,6 @@
 
 #include "s21_queue.h"
 
-#define s21_EPS 1e-7
-
 using MyTypes = testing::Types<int, double, std::list<int>, std::string>;
 
 template<typename T>
