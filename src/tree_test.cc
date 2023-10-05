@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "tree.h"
+#include "s21_map.h"
 #include <iostream>
 
 // проверка конструктора для узла Node c передаваемым значением ключа
@@ -68,6 +69,74 @@ TEST(Tree, CopyConstructorTree) {
     ASSERT_EQ(tree.root->key, copyTree.root->key);
     ASSERT_EQ(tree.root->right->left->key, copyTree.root->right->left->key);
 }
+
+// ПРоверка оператора присваивания переносом
+TEST(Tree, OperatorTree) {
+    // создаем пустое дерево и заносим туда узлы с различными ключами
+    s21::Tree<int, int> tree = s21::Tree<int, int>(); // создаем пустое дерево
+    tree.Insert(12); // узел станет корнем дерева
+    tree.Insert(2); // пойдет в левую часть
+    tree.Insert(16); // пойдет в правую часть
+    tree.Insert(13); // пойдет правую, потом в левую часть
+
+    // Используем перезагруженный оператор
+    s21::Tree<int, int> moveTree = tree;
+        
+    ASSERT_EQ(tree.root->key, moveTree.root->key);
+    ASSERT_EQ(tree.root->right->left->key, moveTree.root->right->left->key);
+}
+
+// ПРоверка конструктора итератора
+TEST(Tree, IteratorConstructor) {
+    // создаем пустое дерево и заносим туда узлы с различными ключами
+    s21::Tree<int, int> tree = s21::Tree<int, int>(); // создаем пустое дерево
+    tree.Insert(12); // узел станет корнем дерева
+    tree.Insert(2); // пойдет в левую часть
+    tree.Insert(16); // пойдет в правую часть
+    tree.Insert(13); // пойдет правую, потом в левую часть
+
+    // создаем иттератор через исследуемый конструктор
+    s21::Iterator<int, int> iter(tree.root->left, tree.root);
+        
+    ASSERT_EQ(tree.root, iter.root_);
+    ASSERT_EQ(tree.root->left, iter.node_);
+
+    ASSERT_EQ(*iter, 2);
+}
+
+// ПРоверка перезагруженных операторов итератора (*, ++, --, ==, !=)
+TEST(Tree, IteratorOperator) {
+    // создаем пустое дерево и заносим туда узлы с различными ключами
+    s21::Tree<int, int> tree = s21::Tree<int, int>(); // создаем пустое дерево
+    tree.Insert(12); // узел станет корнем дерева
+    tree.Insert(2); // пойдет в левую часть
+    tree.Insert(16); // пойдет в правую часть
+    tree.Insert(13); // пойдет правую, потом в левую часть
+
+    // создаем иттератор c помощью нашего конструктора
+    s21::Iterator<int, int> iter(tree.root->left, tree.root);
+    s21::Iterator<int, int> iter1(iter.node_, tree.root); // для проверки '==' и '!='
+    ASSERT_EQ(*iter, 2);
+
+    ++iter;
+    ++iter;
+    
+    ASSERT_EQ(iter!=iter1, true);
+    iter++;
+    // iter++; !!! вылетит сегментэйшн фолт
+    --iter;
+    iter--;
+    iter--;
+    ASSERT_EQ(iter==iter1, true);
+    ASSERT_EQ(*iter, 2);
+}
+
+
+TEST(Map, DefaultConstructor) {
+    s21::map<int, int> m;
+    ASSERT_EQ(m.tree_in_map.root, nullptr);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

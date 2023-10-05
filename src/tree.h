@@ -23,11 +23,17 @@ namespace s21 {
   template <typename T, typename V>
   class Tree {
     public:
+
+    // Внутрений класс итератор
+    // class Iterator;
+
     // КОНСТРУКТОРЫ И ДЕСТРУКТОРЫ
     Tree();     // конструктор по умолчанию - пустое дерево
     Tree(const Tree& copy); // rконструктор копирования
     ~Tree(); // деструктор (удаляет узлы дерева и выставляет указатель на корень - null)
     
+    // Перезагрузка оператора присваивания для перемещающегося объекта
+    Tree<T, V>& operator=(Tree&& other);
     // методы для работы с деревом
     
     Node<T, V>* Insert(T key);        // вставка узла в соответсвующее место по ключу
@@ -35,10 +41,8 @@ namespace s21 {
     void ClearTree(Node<T, V>* node);   // полностью очищает поддерево от переданново узла
     Node<T, V>* CopyTree(Node<T, V>* node); // полное копирование дерева
 
-
     // Параметр - указатель на корень дерева
     Node<T, V>* root;                 // указатель на корень дерева
-
   };
   /**
    * КОНСТРУКТОР ПО УМОЛЧАНИЮ
@@ -64,6 +68,16 @@ namespace s21 {
   Tree<T, V>::~Tree() {
     ClearTree(root);
     root = nullptr;
+  }
+
+  // оператор присваивания переносом
+  template <typename T, typename V>
+  Tree<T, V>& Tree<T, V>::operator=(Tree&& other) {
+    if (this != other) {
+      ClearTree(root);
+      root = exchange(other.root, nullptr);
+    }
+    return * this;
   }
 
   /**
@@ -121,6 +135,101 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     return newNode;
   }
   
+  // ВНУТРЕНИЙ КЛАСС ИТЕРАТОР
+  template <typename T, typename V>
+  class Iterator {
+    public:
+    // содержит два параметра:
+    Node<T, V>* node_; // указатель на текущий узел дерева
+    Node<T, V>* root_; // указатель на корневой узел дерева
+
+    // единственный конструктор,
+    // принимает указатель на узел (node) и указатель на корень (root)
+    // и передает их в параметры класса
+    Iterator(Node<T, V>* node, Node<T, V>* root) : node_(node), root_(root) {}
+
+    // перезагружаем операторы:
+    // получение указателя на значение ключа, на узел которого указывает итератор
+    T& operator*() const {
+      return node_->key;
+    }
+
+    // Перезагрузка операторов инкремента и декремента:
+    // Сделаем постфиксную и префиксную перезагрузку: https://learn.microsoft.com/ru-ru/cpp/cpp/increment-and-decrement-operator-overloading-cpp?view=msvc-170
+
+    // перезагрузка префиксного оператора инкремента
+    // !!! Если доходит до конечного элемента, то вылетает сега - ПОДУМАТЬ
+    Iterator& operator++() {
+      if (node_ != nullptr) {
+        if (node_->right != nullptr) {
+          node_ = node_->right;
+          while (node_->left != nullptr) {
+            node_ = node_->left;
+          }
+        } else {
+          Node<T, V>* parent = node_->top;
+          while (parent != nullptr && node_ == parent->right) {
+            node_ = parent;
+            parent = parent->top;
+          }
+          node_ = parent;
+
+        }
+        return *this;
+      }
+      return *this;
+    }
+
+    // перезагрузка постфиксного оператора инкремента
+    Iterator operator++(int) {
+      Iterator tmp_incr = *this;
+      ++(*this);
+      return tmp_incr;
+    }
+
+        // перезагрузка префиксного оператора декремента
+    // !!! Если доходит до начального элемента, то вылетает сега - ПОДУМАТЬ
+    Iterator& operator--() {
+      if (node_ != nullptr) {
+        if (node_->left != nullptr) {
+          node_ = node_->left;
+          while (node_->right != nullptr) {
+            node_ = node_->right;
+          }
+        } else {
+          Node<T, V>* parent = node_->top;
+          while (parent != nullptr && node_ == parent->left) {
+            node_ = parent;
+            parent = parent->top;
+          }
+          node_ = parent;
+
+        }
+        return *this;
+      }
+      return *this;
+    }
+    
+    // перезагрузка постфиксного оператора декремента
+    Iterator operator--(int) {
+      Iterator tmp_incr = *this;
+      --(*this);
+      return tmp_incr;
+    }
+
+    // перезагрузка оператора '=='
+    // Два итератора равны, если они указывают на один и тот же элемент.
+    bool operator==(const Iterator& other) const {
+      return node_ == other.node_;
+    }
+
+        // перезагрузка оператора '!='
+    bool operator!=(const Iterator& other) const {
+      return node_ != other.node_;
+    }
+
+  };
+
 };
 
 #endif  // CPP2_SRC_TREE_H_
