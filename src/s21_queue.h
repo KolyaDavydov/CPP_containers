@@ -18,20 +18,17 @@ namespace s21 {
         using size_type = typename Container::size_type;
 
         Queue() : container() {
-            ;
         }
 
         Queue(std::initializer_list<value_type> const &items) : container(items) {
         }
 
         Queue(const Queue &q) : container(q.container) {
-
         }
 
         Queue(Queue &&q) noexcept {
             container = std::move(q.container);
         }
-
 
         Queue<T, Container> &operator=(const Queue &q) {
             if (this != &q) {
@@ -94,7 +91,6 @@ namespace s21 {
         void swap(Queue &other) {
             container.swap(other.container);
         }
-
 
     private:
         Container container;
