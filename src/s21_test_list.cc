@@ -88,7 +88,6 @@ TYPED_TEST(ListTest, CopyConstructor) {
     EXPECT_EQ(copy.size(), std_copy.size());
     EXPECT_EQ(copy.size(), size);
     EXPECT_EQ(original.size(), copy.size());
-
 }
 
 TYPED_TEST(ListTest, MoveConstructor) {

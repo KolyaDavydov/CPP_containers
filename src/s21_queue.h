@@ -12,45 +12,41 @@ namespace s21 {
 
     public:
         // attributes
-        using value_type = typename Container::size_type;
+        using value_type = typename Container::value_type;
         using reference = typename Container::reference;
         using const_reference = typename Container::const_reference;
         using size_type = typename Container::size_type;
 
-        Queue() {
-            container();
+        Queue() : container() {            ;
         }
 
-        Queue(std::initializer_list<value_type> const &items) : Queue() {
-            container(items);
+        Queue(std::initializer_list<value_type> const &items) :  container(items) {
         }
 
-        Queue(const Queue &q) : Queue() {
-            container(q);
+        Queue(const Queue &q) : container(q.container) {
+
         }
 
-        Queue(Queue &&q) noexcept: Queue() {
-            container(q);
+        Queue(Queue &&q) noexcept  {
+            container = std::move(q.container);
         }
 
 
-        Queue<T, Container> &operator=(const Queue<T> &q) {
+        Queue<T, Container> &operator=(const Queue &q) {
             if (this != &q) {
                 container = q.container;
             }
             return *this;
         }
 
-        Queue<T, Container> &operator=(Queue<T> &&q) noexcept {
+        Queue<T, Container> &operator=(Queue &&q) noexcept {
             if (this != &q) {
                 container = std::move(q.container);
             }
             return *this;
         }
 
-        ~Queue() {
-            ~container();
-        }
+        ~Queue() = default;
 
         /*
             Returns a reference to the first element in the container.
