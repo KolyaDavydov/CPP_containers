@@ -170,7 +170,7 @@ TEST(QueueMoveConstructor, StringConstructor) {
     EXPECT_EQ(moved.size(), 5U);
 }
 
-TEST(QueueAssignCopyConstructor, IntAssign) {
+TEST(QueueAssignCopy, IntAssign) {
     std::deque<int> std_lst{1, 2, 3, 4, 5};
 
     s21::Queue<int> original{1, 2, 3, 4, 5};
@@ -188,7 +188,7 @@ TEST(QueueAssignCopyConstructor, IntAssign) {
     EXPECT_EQ(original.size(), std_original.size());
 }
 
-TEST(QueueAssignCopyConstructor, DoubleAssign) {
+TEST(QueueAssignCopy, DoubleAssign) {
     std::deque<double> std_lst{1.0, 2.0, 3.0, 4.0, 5.0};
 
     s21::Queue<double> original{1.0, 2.0, 3.0, 4.0, 5.0};
@@ -206,7 +206,7 @@ TEST(QueueAssignCopyConstructor, DoubleAssign) {
     EXPECT_EQ(original.size(), std_original.size());
 }
 
-TEST(QueueAssignCopyConstructor, StringAssign) {
+TEST(QueueAssignCopy, StringAssign) {
     std::deque<std::string> std_lst{"1", "2", "3", "4", "5"};
 
     s21::Queue<std::string> original{"1", "2", "3", "4", "5"};
@@ -223,6 +223,61 @@ TEST(QueueAssignCopyConstructor, StringAssign) {
     EXPECT_EQ(original.size(), que.size());
     EXPECT_EQ(original.size(), std_original.size());
 }
+
+TEST(QueueAssignMove, IntMove) {
+    std::deque<int> std_lst{1, 2, 3, 4, 5};
+
+    s21::Queue<int> original{1, 2, 3, 4, 5};
+    std::queue<int> std_original(std_lst);
+
+    s21::Queue<int> que;
+    std::queue<int> std_que;
+
+    que = std::move(original);
+    std_que = std::move(std_original);
+
+    EXPECT_EQ(std_original.size(), std_original.size());
+    EXPECT_EQ(original.size(), 0U);
+    EXPECT_EQ(std_que.size(), que.size());
+    EXPECT_EQ(que.size(), 5U);
+}
+
+TEST(QueueAssignMove, DoubleMove) {
+    std::deque<double> std_lst{1.0, 2.0, 3.0, 4.0, 5.0};
+
+    s21::Queue<double> original{1.0, 2.0, 3.0, 4.0, 5.0};
+    std::queue<double> std_original(std_lst);
+
+    s21::Queue<double> que;
+    std::queue<double> std_que;
+
+    que = std::move(original);
+    std_que = std::move(std_original);
+
+    EXPECT_EQ(std_original.size(), std_original.size());
+    EXPECT_EQ(original.size(), 0U);
+    EXPECT_EQ(std_que.size(), que.size());
+    EXPECT_EQ(que.size(), 5U);
+}
+
+TEST(QueueAssignMove, StringMove) {
+    std::deque<std::string> std_lst{"1", "2", "3", "4", "5"};
+
+    s21::Queue<std::string> original{"1", "2", "3", "4", "5"};
+    std::queue<std::string> std_original(std_lst);
+
+    s21::Queue<std::string> que;
+    std::queue<std::string> std_que;
+
+    que = std::move(original);
+    std_que = std::move(std_original);
+
+    EXPECT_EQ(std_original.size(), std_original.size());
+    EXPECT_EQ(original.size(), 0U);
+    EXPECT_EQ(std_que.size(), que.size());
+    EXPECT_EQ(que.size(), 5U);
+}
+
 
 TEST(QueueSelfAssignCopyConstructor, IntAssign) {
     std::deque<int> std_lst{1, 2, 3, 4, 5};

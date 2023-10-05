@@ -1,0 +1,12 @@
+
+
+для запуска тестов нужно чтобы был только один мейн. На данный момент активный - в листе
+
+КОММЕНТАРИИ
+
+ПРИСВАИВАНИЕ С ПЕРЕМЕЩЕНИЕМ при самом себе приводит к уб!!!!!!!!! Also, the standard library functions called with
+xvalue arguments may assume the argument is the only reference to the object; if it was constructed from an lvalue
+with std::move, no aliasing checks are made. However, self-move-assignment of standard library types is guaranteed to p
+lace the object in a valid (but usually unspecified) state.
+https://en.cppreference.com/w/cpp/utility/move
+

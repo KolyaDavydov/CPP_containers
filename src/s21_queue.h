@@ -17,17 +17,18 @@ namespace s21 {
         using const_reference = typename Container::const_reference;
         using size_type = typename Container::size_type;
 
-        Queue() : container() {            ;
+        Queue() : container() {
+            ;
         }
 
-        Queue(std::initializer_list<value_type> const &items) :  container(items) {
+        Queue(std::initializer_list<value_type> const &items) : container(items) {
         }
 
         Queue(const Queue &q) : container(q.container) {
 
         }
 
-        Queue(Queue &&q) noexcept  {
+        Queue(Queue &&q) noexcept {
             container = std::move(q.container);
         }
 
@@ -40,9 +41,9 @@ namespace s21 {
         }
 
         Queue<T, Container> &operator=(Queue &&q) noexcept {
-          //  if (this != &q) { //  по сути эта проверка бессмысленна, перемещение самого себя приведет к уб и мы не должны от этого защищать
-                container = q.container;
-          //  }
+            //  if (this != &q) { //  по сути эта проверка бессмысленна, перемещение самого себя приведет к уб и мы не должны от этого защищать
+            container = std::move(q.container);
+            //  }
             return *this;
         }
 
@@ -79,7 +80,7 @@ namespace s21 {
         }
 
         void push(const_reference value) {
-           container.push_back(value);
+            container.push_back(value);
         }
 
         void pop() {
