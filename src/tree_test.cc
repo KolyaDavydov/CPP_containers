@@ -12,6 +12,9 @@ TEST(Tree, Node_constructor) {
 TEST(Tree, Tree_constructor) {
     s21::Tree<int, int> tree = s21::Tree<int, int>();
     ASSERT_EQ(tree.root, nullptr);
+    // ASSERT_EQ(tree.max, 0);
+    // ASSERT_EQ(tree.min, 0);
+    ASSERT_EQ(tree.size, 0);
 }
 
 // провека как вставляется узел в дерево и как дерево удаляется
@@ -68,6 +71,10 @@ TEST(Tree, CopyConstructorTree) {
         
     ASSERT_EQ(tree.root->key, copyTree.root->key);
     ASSERT_EQ(tree.root->right->left->key, copyTree.root->right->left->key);
+
+    ASSERT_EQ(tree.max, copyTree.max);
+    ASSERT_EQ(tree.min, copyTree.min);
+    ASSERT_EQ(tree.size, copyTree.size);
 }
 
 // ПРоверка оператора присваивания переносом
@@ -123,7 +130,7 @@ TEST(Tree, IteratorOperator) {
     
     ASSERT_EQ(iter!=iter1, true);
     iter++;
-    // iter++; !!! вылетит сегментэйшн фолт
+    // iter++; //!!! вылетит сегментэйшн фолт
     --iter;
     iter--;
     iter--;
@@ -131,6 +138,18 @@ TEST(Tree, IteratorOperator) {
     ASSERT_EQ(*iter, 2);
 }
 
+// TEST(Tree, Search) {
+//     // создаем пустое дерево и заносим туда узлы с различными ключами
+//     s21::Tree<int, int> tree = s21::Tree<int, int>(); // создаем пустое дерево
+//     tree.Insert(12); // узел станет корнем дерева
+//     tree.Insert(2); // пойдет в левую часть
+//     tree.Insert(16); // пойдет в правую часть
+//     tree.Insert(13); // пойдет правую, потом в левую часть
+
+//     // tree.Search(2)->key ;
+//     ASSERT_EQ(tree.Search(11)->key, 2);
+//     // ASSERT_EQ(*iter, 2);
+// }
 
 TEST(Map, DefaultConstructor) {
     s21::map<int, int> m;

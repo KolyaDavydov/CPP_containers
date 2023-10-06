@@ -24,6 +24,7 @@ namespace s21 {
   class Tree {
     public:
 
+    class Iterator;
     // Внутрений класс итератор
     // class Iterator;
 
@@ -40,23 +41,38 @@ namespace s21 {
     Node<T, V>* Insert(Node<T, V>* node, T key, Node<T, V>* parent); // вспомогательный метод для вставки узла
     void ClearTree(Node<T, V>* node);   // полностью очищает поддерево от переданново узла
     Node<T, V>* CopyTree(Node<T, V>* node); // полное копирование дерева
+    // два метода - поиск в дереве по переданому значения ключа
+    Node<T, V>* Search(T key);          
+    Node<T, V>* Search(T key, Node<T, V>* node);
 
     // Параметр - указатель на корень дерева
     Node<T, V>* root;                 // указатель на корень дерева
+    T min;  // для хранения максимального значения ключа дерева
+    T max;  // для хранения минимального значения
+
+    int size;   // размер дерева
   };
   /**
    * КОНСТРУКТОР ПО УМОЛЧАНИЮ
    * создает пустое дерево, где указатель на корень - null,
   */
   template <typename T, typename V>
-  Tree<T, V>::Tree() : root(nullptr) {
+  Tree<T, V>::Tree() : root(nullptr), min(), max(), size(0) {
   }
 
   /**
    * КОНСТРУКТОР ЕОПИРОВАНИЯ ДЕРЕВА
   */
   template <typename T, typename V>
-  Tree<T, V>::Tree(const Tree& copy) : root(CopyTree(copy.root)){
+  Tree<T, V>::Tree(const Tree& copy) : root(CopyTree(copy.root)) {
+      this->size = copy.size;
+      if (size == 0) {
+        this->max = copy.max;
+        this->min = copy.min;        
+      } else {
+        this->max = copy.max;
+        this->min = copy.min;
+      }
   }
 
   /**
@@ -86,6 +102,7 @@ namespace s21 {
 template <typename T, typename V>
 Node<T, V>* Tree<T, V>::Insert(T key) {
   root = Insert(root, key, nullptr);
+    this->size++;
   return root;
 }
 
@@ -102,6 +119,14 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
       node->right = Insert(node->right, key, node);
     }
   }
+ 
+    if(node->key < this->min || this->size == 0) {
+      this->min = node->key;
+    } else if (node->key > this->max || this->size == 0) {
+      this->max = node->key;
+    }
+  
+
   return node;
 }
 
@@ -117,6 +142,9 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
       delete node;
     }
   root = nullptr;
+  // max = {};
+  // min = {};
+  size = 0;
   }
 
   /**
@@ -132,9 +160,32 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     newNode->left = CopyTree(node->left);
     newNode->right = CopyTree(node->right);
     newNode->top = node->top;
+    // this->size++;
+
+
     return newNode;
   }
   
+    /**
+   * Два метода для поиска значения ключа в дереве
+  */
+  template <typename T, typename V>
+  Node<T, V>* Tree<T, V>::Search(T key){
+    return Search(key, root);
+  } 
+
+  template <typename T, typename V>
+  Node<T, V>* Tree<T, V>::Search(T key, Node<T, V>* node){
+    if (node == nullptr || node->key == key) {
+      return node;
+    }
+    if (key < node->key) {
+      return Search(key, node->left);
+    } else {
+      return Search(key, node->right);
+    }
+  }
+
   // ВНУТРЕНИЙ КЛАСС ИТЕРАТОР
   template <typename T, typename V>
   class Iterator {
@@ -146,7 +197,9 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     // единственный конструктор,
     // принимает указатель на узел (node) и указатель на корень (root)
     // и передает их в параметры класса
-    Iterator(Node<T, V>* node, Node<T, V>* root) : node_(node), root_(root) {}
+    Iterator(Node<T, V>* node, Node<T, V>* root) : node_(node), root_(root) {
+    }
+
 
     // перезагружаем операторы:
     // получение указателя на значение ключа, на узел которого указывает итератор
