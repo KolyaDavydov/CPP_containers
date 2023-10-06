@@ -383,19 +383,25 @@ TEST(StackMethods, IntStack) {
     std::stack<int> std_que(std_lst);
 
     EXPECT_EQ(que.top(), std_que.top());
+
+
     EXPECT_EQ(que.top(), 5);
+    EXPECT_EQ(std_que.size(), 5U);
+
 
     que.push(6);
     std_que.push(6);
     EXPECT_EQ(que.top(), std_que.top());
     EXPECT_EQ(que.top(), 6);
-    EXPECT_EQ(que.size(), 6U);
+    EXPECT_EQ(std_que.size(), 6U);
+
 
     que.pop();
     std_que.pop();
-    EXPECT_EQ(que.top(), std_que.top());
-    EXPECT_EQ(que.top(), 5);
     EXPECT_EQ(que.size(), 5U);
+  EXPECT_EQ(que.top(), std_que.top());
+    EXPECT_EQ(que.top(), 5);
+
 }
 
 TEST(StackMethods, DoubleStack) {

@@ -282,14 +282,14 @@ namespace s21 {
             }
             Node *tempNode = pos.getCurrentNode();
             Node *nextIter = tempNode->next;
+            if (nextIter == carbineNode) {
+                nextIter = nextIter->next;
+            }
+
             tempNode->prev->next = tempNode->next;
             tempNode->next->prev = tempNode->prev;
             delete tempNode;
 
-            if (nextIter == carbineNode) {
-                carbineNode->prev = carbineNode;
-                carbineNode->next = carbineNode;
-            }
             --lSize;
             return iterator(nextIter, carbineNode);
         }

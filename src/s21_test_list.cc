@@ -495,10 +495,16 @@ TEST(ListModifiersEmpty, DoubleList) {
     s21::List<double> lst;
     std::list<double> std_lst;
 
+    lst.push_back(1.0);
     lst.push_back(3.0);
+    std_lst.push_back(1.0);
     std_lst.push_back(3.0);
-    ASSERT_EQ(lst.size(), 1U);
+    ASSERT_EQ(lst.size(), 2U);
     ASSERT_EQ(lst.size(), std_lst.size());
+    ASSERT_EQ(lst.front(), std_lst.front());
+    ASSERT_EQ(lst.front(), 1.0);
+    ASSERT_EQ(lst.back(), std_lst.back());
+    ASSERT_EQ(lst.back(), 3.0);
 
     double push_back_count = 3.0;
     for (s21::List<double>::iterator it = lst.begin(); it != lst.end(); ++it) {
@@ -508,11 +514,21 @@ TEST(ListModifiersEmpty, DoubleList) {
 
     lst.pop_back();
     std_lst.pop_back();
+    ASSERT_EQ(lst.size(), std_lst.size());
+
+    ASSERT_EQ(lst.front(), std_lst.front());
+    ASSERT_EQ(lst.front(), 1.0);
+    ASSERT_EQ(lst.back(), std_lst.back());
+    ASSERT_EQ(lst.back(), 1.0);
 
     lst.push_front(4.0);
     std_lst.push_front(4.0);
-    ASSERT_EQ(lst.size(), 1U);
+    ASSERT_EQ(lst.size(), 2U);
     ASSERT_EQ(lst.size(), std_lst.size());
+    ASSERT_EQ(lst.front(), std_lst.front());
+    ASSERT_EQ(lst.front(), 4.0);
+    ASSERT_EQ(lst.back(), std_lst.back());
+    ASSERT_EQ(lst.back(), 1.0);
 
     double push_front_count = 4.0;
     for (s21::List<double>::iterator it = lst.begin(); it != lst.end(); ++it) {
@@ -521,6 +537,8 @@ TEST(ListModifiersEmpty, DoubleList) {
     }
 
     lst.pop_front();
+    lst.pop_front();
+    std_lst.pop_front();
     std_lst.pop_front();
     EXPECT_EQ(lst.size(), std_lst.size());
     EXPECT_TRUE(lst.empty());
@@ -556,6 +574,7 @@ TEST(ListModifiersEmpty, DoubleList) {
     std_lst.clear();
     EXPECT_EQ(lst.size(), std_lst.size());
     EXPECT_TRUE(lst.empty());
+
 }
 
 
