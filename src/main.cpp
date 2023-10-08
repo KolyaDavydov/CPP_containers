@@ -10,15 +10,27 @@ int main() {
     tree.Insert(2); // пойдет в левую часть
     tree.Insert(16); // пойдет в правую часть
     tree.Insert(13); // пойдет правую, потом в левую часть
+    tree.Insert(0);
+    tree.Insert(1);
 
         s21::Iterator<int, int> iter(tree.root->left, tree.root);
 
-iter++;
-iter++;
-iter++;
-iter++;
+// ++iter;
+// ++iter;
+// ++iter;
+// ++iter;
+// ++iter;
+// iter++;
+// iter++;
+// iter++;
+iter--;
+iter--;
+iter--;
 
- std::cout << iter.node_->key <<  std::endl;
+ std::cout << iter.node_->extreme <<  std::endl;
+  std::cout << iter.node_->key <<  std::endl;
+
+  std::cout << tree.size <<  std::endl;
  
 
 

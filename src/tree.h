@@ -13,10 +13,12 @@ namespace s21 {
     Node<T,V>* right; // указатель на правый узел
     Node<T,V>* top;   // указатель на родителя
 
+    bool extreme; // если true то это крайний узел (первый или последний)
+
     public:
     // КОнструктор для создания узла со значением ключа
-    Node(const T& key) : key(key), left(nullptr), right(nullptr), top(nullptr) {}
-    Node(T& key) : key(key), left(nullptr), right(nullptr), top(nullptr) {}
+    Node(const T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), extreme(false) {}
+    Node(T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), extreme(false) {}
   }; // end class Node
 
   // класс бинарного дерева
@@ -102,7 +104,17 @@ namespace s21 {
 template <typename T, typename V>
 Node<T, V>* Tree<T, V>::Insert(T key) {
   root = Insert(root, key, nullptr);
-    this->size++;
+    
+    
+    if(key < this->min || this->size == 0) {
+      this->min = key;
+
+    }
+    if (key > this->max || this->size == 0) {
+      this->max = key;
+
+    }
+this->size++;
   return root;
 }
 
@@ -112,21 +124,31 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
   if (node == nullptr) {
     node = new Node<T, V>(key);
     node->top = parent;
+    // следующие три if для того что бы вписать в занчение узла
+    // краевой он или нет, для дальнейшего итеррирования без сеги
+    if(this->size < 2) {
+    node->extreme = true;
+    }
+    if(this->size > 1 && node->key < this->min) {
+      node->extreme = true;
+      node->top->extreme = false;
+    }
+    if(this->size > 1 && node->key > this->max) {
+      node->extreme = true;
+      node->top->extreme = false;
+    }
+
   } else { // если дерево не пустое то рекурсивно идем по нему в нужное место
     if (key < node->key) {
       node->left = Insert(node->left, key, node);
     } else if (key > node->key) {
       node->right = Insert(node->right, key, node);
     }
+
+
+    
   }
  
-    if(node->key < this->min || this->size == 0) {
-      this->min = node->key;
-    } else if (node->key > this->max || this->size == 0) {
-      this->max = node->key;
-    }
-  
-
   return node;
 }
 
@@ -161,6 +183,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     newNode->right = CopyTree(node->right);
     newNode->top = node->top;
     // this->size++;
+    newNode->extreme = node->extreme;
 
 
     return newNode;
@@ -213,7 +236,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     // перезагрузка префиксного оператора инкремента
     // !!! Если доходит до конечного элемента, то вылетает сега - ПОДУМАТЬ
     Iterator& operator++() {
-      if (node_ != nullptr) {
+      if (node_ != nullptr && node_->extreme != true) {
         if (node_->right != nullptr) {
           node_ = node_->right;
           while (node_->left != nullptr) {
@@ -230,6 +253,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
         }
         return *this;
       }
+      
       return *this;
     }
 
@@ -243,7 +267,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
         // перезагрузка префиксного оператора декремента
     // !!! Если доходит до начального элемента, то вылетает сега - ПОДУМАТЬ
     Iterator& operator--() {
-      if (node_ != nullptr) {
+      if (node_ != nullptr && node_->extreme != true) {
         if (node_->left != nullptr) {
           node_ = node_->left;
           while (node_->right != nullptr) {

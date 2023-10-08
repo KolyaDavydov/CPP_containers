@@ -12,8 +12,8 @@ TEST(Tree, Node_constructor) {
 TEST(Tree, Tree_constructor) {
     s21::Tree<int, int> tree = s21::Tree<int, int>();
     ASSERT_EQ(tree.root, nullptr);
-    // ASSERT_EQ(tree.max, 0);
-    // ASSERT_EQ(tree.min, 0);
+    ASSERT_EQ(tree.max, 0);
+    ASSERT_EQ(tree.min, 0);
     ASSERT_EQ(tree.size, 0);
 }
 
