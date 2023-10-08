@@ -119,21 +119,29 @@ TEST(Tree, IteratorOperator) {
     tree.Insert(2); // пойдет в левую часть
     tree.Insert(16); // пойдет в правую часть
     tree.Insert(13); // пойдет правую, потом в левую часть
+        tree.Insert(0);
 
     // создаем иттератор c помощью нашего конструктора
     s21::Iterator<int, int> iter(tree.root->left, tree.root);
     s21::Iterator<int, int> iter1(iter.node_, tree.root); // для проверки '==' и '!='
     ASSERT_EQ(*iter, 2);
 
-    ++iter;
-    ++iter;
+    ++iter; //12
+    ++iter; //13
     
-    ASSERT_EQ(iter!=iter1, true);
-    iter++;
-    // iter++; //!!! вылетит сегментэйшн фолт
-    --iter;
-    iter--;
-    iter--;
+    ASSERT_EQ(iter!=iter1, true); // 13 != 2
+    iter++; //16
+    iter++; //16
+    iter++; //16
+    --iter; //13
+    
+    iter--; //12
+    iter--; //2
+    iter--; //0
+    iter--; //0
+    iter++; //2
+
+
     ASSERT_EQ(iter==iter1, true);
     ASSERT_EQ(*iter, 2);
 }

@@ -13,12 +13,12 @@ namespace s21 {
     Node<T,V>* right; // указатель на правый узел
     Node<T,V>* top;   // указатель на родителя
 
-    bool extreme; // если true то это крайний узел (первый или последний)
-
+    bool is_min; // если true то это крайний узел (первый или последний)
+    bool is_max;
     public:
     // КОнструктор для создания узла со значением ключа
-    Node(const T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), extreme(false) {}
-    Node(T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), extreme(false) {}
+    Node(const T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), is_min(false), is_max(false) {}
+    Node(T& key) : key(key), left(nullptr), right(nullptr), top(nullptr), is_min(false), is_max(false) {}
   }; // end class Node
 
   // класс бинарного дерева
@@ -126,16 +126,17 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     node->top = parent;
     // следующие три if для того что бы вписать в занчение узла
     // краевой он или нет, для дальнейшего итеррирования без сеги
-    if(this->size < 2) {
-    node->extreme = true;
+    if(this->size < 1) {
+    node->is_max = true;
+    node->is_min = true;
     }
-    if(this->size > 1 && node->key < this->min) {
-      node->extreme = true;
-      node->top->extreme = false;
+    if(this->size >= 1 && node->key < this->min) {
+      node->is_min = true;
+      node->top->is_min = false;
     }
-    if(this->size > 1 && node->key > this->max) {
-      node->extreme = true;
-      node->top->extreme = false;
+    if(this->size >= 1 && node->key > this->max) {
+      node->is_max = true;
+      node->top->is_max = false;
     }
 
   } else { // если дерево не пустое то рекурсивно идем по нему в нужное место
@@ -183,7 +184,8 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     newNode->right = CopyTree(node->right);
     newNode->top = node->top;
     // this->size++;
-    newNode->extreme = node->extreme;
+    newNode->is_max = node->is_max;
+    newNode->is_min = node->is_min;
 
 
     return newNode;
@@ -191,6 +193,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
   
     /**
    * Два метода для поиска значения ключа в дереве
+   * возвращаемое значение на указатель узла этого ключа
   */
   template <typename T, typename V>
   Node<T, V>* Tree<T, V>::Search(T key){
@@ -236,7 +239,7 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
     // перезагрузка префиксного оператора инкремента
     // !!! Если доходит до конечного элемента, то вылетает сега - ПОДУМАТЬ
     Iterator& operator++() {
-      if (node_ != nullptr && node_->extreme != true) {
+      if (node_ != nullptr && node_->is_max != true) {
         if (node_->right != nullptr) {
           node_ = node_->right;
           while (node_->left != nullptr) {
@@ -267,8 +270,8 @@ Node<T, V>* Tree<T, V>::Insert(Node<T, V>* node, T key, Node<T, V>* parent) {
         // перезагрузка префиксного оператора декремента
     // !!! Если доходит до начального элемента, то вылетает сега - ПОДУМАТЬ
     Iterator& operator--() {
-      if (node_ != nullptr && node_->extreme != true) {
-        if (node_->left != nullptr) {
+      if (node_ != nullptr && node_->is_min != true) {
+        if (node_->left != nullptr ) {
           node_ = node_->left;
           while (node_->right != nullptr) {
             node_ = node_->right;
