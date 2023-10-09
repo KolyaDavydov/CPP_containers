@@ -1,5 +1,6 @@
 #ifndef CPP2_SRC_TREE_H_
 #define CPP2_SRC_TREE_H_
+#include <iostream>
 
 namespace s21 {
 /**
@@ -63,6 +64,13 @@ class Tree {
   // два метода - поиск в дереве по переданому значения ключа
   Node<T, V>* Search(T key);
   Node<T, V>* Search(T key, Node<T, V>* node);
+  // методы для удаления узла дерева
+  Node<T, V>* FindMin(Node<T, V>* node);
+  Node<T, V>* RemoveMin(Node<T, V>* node);
+  Node<T, V>* Remove(Node<T, V>* node, T key);
+  void Remove(T key);
+  // смена содержимого контейнера на содержимое другого
+  void Swap(Tree<T, V>& other);
 
   // Параметр - указатель на корень дерева
   Node<T, V>* root;  // указатель на корень дерева
@@ -221,7 +229,76 @@ Node<T, V>* Tree<T, V>::Search(T key, Node<T, V>* node) {
   }
 }
 
-// ВНУТРЕНИЙ КЛАСС ИТЕРАТОР
+// Методы для удаления узла дерева
+template <typename T, typename V>
+Node<T, V>* Tree<T, V>::FindMin(Node<T, V>* node) {
+  if (!node->left) return node;
+  return FindMin(node->left);
+}
+template <typename T, typename V>
+Node<T, V>* Tree<T, V>::RemoveMin(Node<T, V>* node) {
+  if (!node->left) return node->right;
+  node->left = RemoveMin(node->left);
+  return node;
+}
+template <typename T, typename V>
+Node<T, V>* Tree<T, V>::Remove(Node<T, V>* node, T key) {
+  if (!node) return nullptr;
+  if (key < node->key) {
+    node->left = Remove(node->left, key);
+  } else if (key > node->key) {
+    node->right = Remove(node->right, key);
+  } else {
+    Node<T, V>* left = node->left;
+    Node<T, V>* right = node->right;
+    delete node;
+    if (!right) return left;
+    if (!left) return right;
+    // std::cout << "Размерasd: " << left->key << std::endl;
+    Node<T, V>* min = FindMin(right);
+    min->right = RemoveMin(right);
+    min->left = left;
+    min->left->top = right;
+    this->size--;
+    // min->top = node->top;
+
+    return min;
+  }
+  this->size--;
+
+  return node;
+}
+
+template <typename T, typename V>
+void Tree<T, V>::Remove(T key) {
+  Node<T, V>* n = Search(key);
+  if (key == this->min) {
+    // std::cout << "Проверка Размер: " << this->min << std::endl;
+    if (size > 1) {
+      if (n->top != nullptr) this->min = n->top->key;
+      if (n->top == nullptr) this->min = n->right->key;
+    }
+  }
+
+  if (key == this->max) {
+    if (size > 1) {
+      if (n->top != nullptr) this->max = n->top->key;
+      if (n->top == nullptr) this->max = n->left->key;
+    }
+  }
+  root = Remove(root, key);
+}
+
+// смена содержимого контейнера на содержимое другого
+template <typename T, typename V>
+void Tree<T, V>::Swap(Tree<T, V>& other) {
+  std::swap(root, other.root);
+  std::swap(size, other.size);
+  std::swap(min, other.min);
+  std::swap(max, other.max);
+}
+
+// КЛАСС ИТЕРАТОР
 template <typename T, typename V>
 class Iterator {
  public:

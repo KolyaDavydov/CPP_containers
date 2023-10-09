@@ -35,6 +35,16 @@ class map {
   std::pair<iterator, bool> insert(const value_type& value);
   std::pair<iterator, bool> insert(const T& key, const V& obj);
   std::pair<iterator, bool> insert_or_assign(const T& key, const V& obj);
+
+  // удаление узла
+  void erase(iterator pos);
+
+  //смена содержимого контейнера на другое
+  void swap(map& other);
+
+  //слияние передаваемого словаря в первый
+  void merge(map& other);
+
   // вспомогательные методы
   // проверка что такого ключа нет в словаре
   bool check_unique(const value_type& value);
@@ -105,6 +115,29 @@ std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert_or_assign(
   auto r = this->tree_in_map.Search(key);
   r->val = obj;
   return std::make_pair(iterator(r, tree_in_map.root), true);
+}
+
+template <typename T, typename V>
+void map<T, V>::erase(iterator pos) {
+  if (pos.root_ != nullptr) {
+    this->tree_in_map.Remove(pos.node_->key);
+  }
+}
+
+template <typename T, typename V>
+void map<T, V>::swap(map& other) {
+  tree_in_map.Swap(other.tree_in_map);
+}
+
+template <typename T, typename V>
+void map<T, V>::merge(map& other) {
+  iterator iter = other.begin();
+  while (iter != other.end()) {
+    this->insert(iter.node_->key, iter.node_->val);
+
+    iter++;
+  }
+  this->insert(iter.node_->key, iter.node_->val);
 }
 
 // Вспомогательные методы

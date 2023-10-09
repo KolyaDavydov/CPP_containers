@@ -161,6 +161,22 @@ TEST(Tree, Search) {
   // ASSERT_EQ(*iter, 2);
 }
 
+TEST(Tree, Remove) {
+  // создаем пустое дерево и заносим туда узлы с различными ключами
+  s21::Tree<int, int> tree = s21::Tree<int, int>();  // создаем пустое дерево
+  tree.Insert(12);  // узел станет корнем дерева
+  tree.Insert(2);   // пойдет в левую часть
+  tree.Insert(16);  // пойдет в правую часть
+  tree.Insert(13);  // пойдет правую, потом в левую часть
+
+  tree.Remove(12);
+  ASSERT_EQ(tree.root->key, 13);
+  ASSERT_EQ(tree.size, 3);
+
+  tree.Remove(2);
+  ASSERT_EQ(tree.size, 2);
+}
+
 TEST(Map, DefaultConstructor) {
   s21::map<int, int> m;
   ASSERT_EQ(m.tree_in_map.root, nullptr);
@@ -197,6 +213,63 @@ TEST(Map, Insert_or_assign) {
   m1.insert_or_assign(1, "уже не один");
   EXPECT_EQ(m1.tree_in_map.size, 2);
   EXPECT_EQ(m1.tree_in_map.root->val, "уже не один");
+}
+
+TEST(Map, Erase_and_Begin) {
+  s21::map<int, std::string> m1;
+  m1.insert_or_assign(10, "десять");
+  m1.insert_or_assign(1, "один");
+  m1.insert_or_assign(2, "два");
+  m1.insert_or_assign(12, "двенадцать");
+  EXPECT_EQ(m1.tree_in_map.size, 4);
+  EXPECT_EQ(m1.tree_in_map.root->val, "десять");
+
+  auto iter = m1.begin();
+  EXPECT_EQ(iter.node_->key, 1);
+
+  auto iter2 = m1.end();
+  EXPECT_EQ(iter2.node_->key, 12);
+
+  m1.erase(iter);
+  EXPECT_EQ(m1.tree_in_map.size, 3);
+  EXPECT_EQ(m1.begin().node_->key, 2);
+}
+
+TEST(Map, Swap) {
+  s21::map<int, std::string> m1;
+  m1.insert_or_assign(10, "десять");
+  m1.insert_or_assign(1, "один");
+  m1.insert_or_assign(2, "два");
+  m1.insert_or_assign(12, "двенадцать");
+  s21::map<int, std::string> m2;
+  EXPECT_EQ(m1.tree_in_map.size, 4);
+  EXPECT_EQ(m2.tree_in_map.size, 0);
+
+  m1.swap(m2);
+  EXPECT_EQ(m1.tree_in_map.size, 0);
+  EXPECT_EQ(m2.tree_in_map.size, 4);
+  EXPECT_EQ(m2.tree_in_map.root->val, "десять");
+  EXPECT_EQ(m2.tree_in_map.max, 12);
+  EXPECT_EQ(m2.tree_in_map.min, 1);
+}
+
+TEST(Map, Merge) {
+  s21::map<int, std::string> m1;
+  m1.insert_or_assign(10, "десять");
+  m1.insert_or_assign(1, "один");
+  m1.insert_or_assign(2, "два");
+  m1.insert_or_assign(12, "двенадцать");
+  s21::map<int, std::string> m2;
+  m2.insert_or_assign(11, "одинадцать");
+  m2.insert_or_assign(3, "три");
+  m2.insert_or_assign(2, "два");
+
+  m1.merge(m2);
+  EXPECT_EQ(m1.tree_in_map.size, 6);
+  //   EXPECT_EQ(m2.tree_in_map.size, 4);
+  //   EXPECT_EQ(m2.tree_in_map.root->val, "десять");
+  //   EXPECT_EQ(m2.tree_in_map.max, 12);
+  //   EXPECT_EQ(m2.tree_in_map.min, 1);
 }
 
 int main(int argc, char **argv) {
