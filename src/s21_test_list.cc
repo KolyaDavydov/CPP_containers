@@ -147,17 +147,17 @@ TYPED_TEST(ListTest, MoveAssign) {
   EXPECT_EQ(std_lst.size(), 6U);
 }
 
-TYPED_TEST(ListTest, MoveSelfAssign) {
-  // по сути это уб
-  s21::List<TypeParam> original(5);
-  original = std::move(original);
+// TYPED_TEST(ListTest, MoveSelfAssign) {
+//   // по сути это уб
+//   s21::List<TypeParam> original(5);
+//   original = std::move(original);
 
-  std::list<TypeParam> std_lst(5);
-  std_lst = std::move(std_lst);
+//   std::list<TypeParam> std_lst(5);
+//   std_lst = std::move(std_lst);
 
-  EXPECT_EQ(original.size(), std_lst.size());
-  EXPECT_EQ(original.size(), 0U);
-}
+//   EXPECT_EQ(original.size(), std_lst.size());
+//   EXPECT_EQ(original.size(), 0U);
+// }
 
 // front, back, empty, beign, end
 template <typename Iterator>
