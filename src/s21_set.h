@@ -18,17 +18,22 @@ class set {
     using const_iterator = const typename tree_type::Iterator;
     using size_type = std::size_t;
 
-    Set() : tree_(new tree_type{}) {}
+    set() : tree_(new tree_type{}) {}
 
-    Set(std::initializer_list<value_type> const &items) {
+    set(std::initializer_list<value_type> const &items) {
       for (value_type i : items) insert(i);
     }
 
-    Set(const Set &v) {}
+    set(const Set &v) {}
 
-    Set(Set && v) noexcept {}
+    set(const set &other) : tree_(new tree_type(*other.tree_)) {}
 
-    ~Set() {
+    set(set && other) noexcept
+        : tree_(new tree_type(std::move(*other.tree_))) {}
+
+    set(set && v) noexcept {}
+
+    ~set() {
       delete tree_;
       tree_ = nullptr;
     }
@@ -42,6 +47,26 @@ class set {
     iterator end() noexcept { return iterator(); }
 
     const_iterator end() const noexcept { return const_iterator(); }
+
+    iterator find(const key_type &key) noexcept { return tree_->Search(key); }
+
+    const_iterator find(const key_type &key) const {
+      return tree_->Search(key);
+    }
+
+    void clear() { tree_->ClearTree(root); };
+
+    // operator overload
+
+    set &operator=(const set &other) {
+      *tree_ = *other.tree_;
+      return *this;
+    }
+
+    set &operator=(set &&other) noexcept {
+      *tree_ = std::move(*other.tree_);
+      return *this;
+    }
   }
 
  private:
