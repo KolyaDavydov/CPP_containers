@@ -182,6 +182,41 @@ TEST(Map, DefaultConstructor) {
   ASSERT_EQ(m.tree_in_map.root, nullptr);
 }
 
+TEST(Map, InitializerListConstructor) {
+  s21::map<int, std::string> m{{1, "one"}, {2, "two"}, {3, "three"}};
+  EXPECT_EQ(m.tree_in_map.size, 3);
+  EXPECT_EQ(m.tree_in_map.root->key, 1);
+  EXPECT_EQ(m.tree_in_map.root->val, "one");
+
+  //   EXPECT_EQ(m.at(1), "one");
+  //   EXPECT_EQ(m.at(2), "two");
+  //   EXPECT_EQ(m.at(3), "three");
+}
+
+TEST(Map, CopyConstructor) {
+  s21::map<int, int> m1 = {{2, 2}, {3, 3}, {4, 4}, {5, 5}, {1, 1}};
+  s21::map<int, int> m2(m1);
+  EXPECT_EQ(m1.tree_in_map.size, 5);
+  EXPECT_EQ(m1.tree_in_map.root->key, 2);
+}
+
+TEST(Map, At) {
+  s21::map<int, std::string> map = {{1, "one"}, {2, "two"}, {3, "three"}};
+  std::map<int, std::string> map1 = {{1, "one"}, {2, "two"}, {3, "three"}};
+  EXPECT_EQ(map.at(2), map1.at(2));
+  EXPECT_THROW(map.at(4), std::out_of_range);
+}
+
+TEST(Map, Brackets) {
+  s21::map<int, std::string> map = {{1, "one"}, {2, "two"}, {3, "three"}};
+
+  EXPECT_EQ(map.at(1), "one");
+  EXPECT_EQ(map[2], "two");
+  EXPECT_THROW(map.at(4), std::out_of_range);
+  map[2] = "TWO";
+  EXPECT_EQ(map[2], "TWO");
+}
+
 // вставка std::pair, если такой ключ есть то то не вставляет и возвращает false
 TEST(Map, InsertPair) {
   s21::map<int, int> m1;

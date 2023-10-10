@@ -12,18 +12,32 @@ class map {
   // STL), принятые для удобства восприятия кода класса:
   using key_type = T;
   using mapped_type = V;
-
+  using default_value = mapped_type&;
   using value_type = std::pair<const key_type, mapped_type>;
   using iterator = Iterator<T, V>;
-  // using const_iterator = ConstIterator<value_type, V>;
   using size_type = size_t;
 
   // КОНСТРУКТОРЫ И ДЕСТРУКТОРЫ
+  //создает пустой словарь
   map();
+
+  // Конструктор - создает словарь с переданными списками
+  map(std::initializer_list<value_type> const& items);
+
+  // Конструктор копирования
+  map(const map& m);
+  // Конструктор перемещения
+  map(map&& m);
+
+  ~map();
 
   // ПАРАМЕТРЫ
   Tree<key_type, mapped_type> tree_in_map;
   // iterator* iter;
+
+  map<T, V> operator=(map&& m);
+  mapped_type& at(const T& key);
+  mapped_type& operator[](const T& key);
 
   // возвращает указатель на начало и конец
   iterator begin();
@@ -53,6 +67,59 @@ class map {
 // инициализируем пустой словарь где в качестве параметра пустое дерево
 template <typename T, typename V>
 map<T, V>::map() : tree_in_map() {}
+
+template <typename T, typename V>
+map<T, V>::map(std::initializer_list<value_type> const& items) : map() {
+  for (value_type item : items) {
+    insert(item);
+  }
+}
+
+template <typename T, typename V>
+map<T, V>::map(const map& m) : tree_in_map(m.tree_in_map) {}
+
+template <typename T, typename V>
+map<T, V>::map(map&& m) : tree_in_map(std::move(m.tree_in_map)) {}
+
+template <typename T, typename V>
+map<T, V>::~map() {}
+
+template <typename T, typename V>
+map<T, V> map<T, V>::operator=(map<T, V>&& m) {
+  if (this != &m) {
+    tree_in_map = std::move(m.tree_in_map);
+  }
+  return *this;
+}
+
+template <typename T, typename V>
+typename map<T, V>::mapped_type& map<T, V>::at(const T& key) {
+  Node<T, V>* vt = this->tree_in_map.Search(key);
+  if (vt == nullptr) {
+    throw std::out_of_range("s21::map::at: out_of_range");
+  } else {
+    return vt->val;
+  }
+}
+
+template <typename T, typename V>
+typename map<T, V>::mapped_type& map<T, V>::operator[](const T& key) {
+  iterator i = this->begin();
+  if (i.node_ != nullptr) {
+    for (; i != this->end(); i++) {
+      if (i.node_->key == key) {
+        return i.node_->val;
+      }
+    }
+
+    std::pair<iterator, bool> res = insert(value_type(key, mapped_type()));
+
+    iterator i = res.first;
+    return i.node_->val;
+  }
+  static mapped_type default_value;
+  return default_value;
+}
 
 // методы для итеррирования по элементам контейнера
 template <typename T, typename V>
