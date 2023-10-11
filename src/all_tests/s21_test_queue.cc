@@ -3,7 +3,7 @@
 #include "queue"
 #include "list"
 
-#include "s21_queue.h"
+#include "../s21_queue.h"
 
 using MyTypes = testing::Types<int, double, std::list<int>, std::string>;
 

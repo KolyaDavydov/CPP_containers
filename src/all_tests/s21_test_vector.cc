@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "s21_vector.h"
+#include "../s21_vector.h"
 #include "vector"
 
 #define s21_EPS 1e-7

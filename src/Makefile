@@ -1,4 +1,4 @@
-GCC = g++ -Wall -Wextra -Werror
+GCC = g++ -std=c++17 -Wall -Wextra -Werror
 LIBS = -lgtest
 LINUX = -lsubunit -lrt -lpthread -lm
 VALGRIND_FLAGS = --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all --verbose

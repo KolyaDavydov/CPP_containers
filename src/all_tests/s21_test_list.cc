@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "s21_list.h"
+#include "../s21_list.h"
 #include "list"
 
 #define s21_EPS 1e-7
@@ -1193,7 +1193,7 @@ TEST(ListModifiers, SpliceEmpty) {
     ASSERT_EQ(lst_other.size(), 0U);
 }
 
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// int main(int argc, char **argv) {
+//     testing::InitGoogleTest(&argc, argv);
+//     return RUN_ALL_TESTS();
+// }

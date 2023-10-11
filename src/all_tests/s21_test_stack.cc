@@ -3,7 +3,7 @@
 #include "stack"
 #include "list"
 
-#include "s21_stack.h"
+#include "../s21_stack.h"
 
 using MyTypes = testing::Types<int, double, std::list<int>, std::string>;
 
