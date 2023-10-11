@@ -43,6 +43,11 @@ class map {
   iterator begin();
   iterator end();
 
+  void clear();   // очищает словарь
+  bool empty();   // возвращает true, если контейнер пустой
+  size_type size(); // возвращает размер контейнера
+  size_type max_size();   // возвращает максимальный размер контейнера
+
   // методы для изменения контейнера
 
   // ВСТАВКА УЗЛОВ
@@ -58,6 +63,8 @@ class map {
 
   //слияние передаваемого словаря в первый
   void merge(map& other);
+
+  bool contains(const T& key);
 
   // вспомогательные методы
   // проверка что такого ключа нет в словаре
@@ -121,6 +128,25 @@ typename map<T, V>::mapped_type& map<T, V>::operator[](const T& key) {
   return default_value;
 }
 
+template <typename T, typename V>
+bool map<T, V>::empty() {
+  if (this->tree_in_map.size == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+template <typename T, typename V>
+typename map<T, V>::size_type map<T, V>::size() {
+  return this->tree_in_map.size;
+}
+
+template <typename T, typename V>
+typename map<T, V>::size_type map<T, V>::max_size() {
+  return this->tree_in_map.MaxSize();
+}
+
 // методы для итеррирования по элементам контейнера
 template <typename T, typename V>
 typename map<T, V>::iterator map<T, V>::begin() {
@@ -141,6 +167,11 @@ typename map<T, V>::iterator map<T, V>::end() {
 }
 
 // методы для изменения контейнера
+
+template <typename T, typename V>
+void map<T, V>::clear() {
+  this->tree_in_map.ClearTree(tree_in_map.root);
+}
 
 // вставляет узел и возвращает итератор туда, где находится элемент в
 // контейнере, и логическое значение, обозначающее, имела ли место вставка если
@@ -205,6 +236,16 @@ void map<T, V>::merge(map& other) {
     iter++;
   }
   this->insert(iter.node_->key, iter.node_->val);
+}
+
+template <typename T, typename V>
+bool map<T, V>::contains(const T& key) {
+  Node<T, V>* node = this->tree_in_map.Search(key);
+  if (node != nullptr) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // Вспомогательные методы

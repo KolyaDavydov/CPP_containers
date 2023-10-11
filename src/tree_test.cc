@@ -200,6 +200,19 @@ TEST(Map, CopyConstructor) {
   EXPECT_EQ(m1.tree_in_map.root->key, 2);
 }
 
+TEST(Map, Size_Empty) {
+  s21::map<int, std::string> empty_map;
+  s21::map<int, std::string> map = {{1, "one"}, {2, "two"}, {3, "three"}};
+
+  EXPECT_TRUE(empty_map.empty());
+  EXPECT_EQ(empty_map.size(), 0);
+
+  EXPECT_FALSE(map.empty());
+  EXPECT_EQ(map.size(), 3);
+}
+
+
+
 TEST(Map, At) {
   s21::map<int, std::string> map = {{1, "one"}, {2, "two"}, {3, "three"}};
   std::map<int, std::string> map1 = {{1, "one"}, {2, "two"}, {3, "three"}};
@@ -215,6 +228,14 @@ TEST(Map, Brackets) {
   EXPECT_THROW(map.at(4), std::out_of_range);
   map[2] = "TWO";
   EXPECT_EQ(map[2], "TWO");
+}
+
+TEST(Map, Clear) {
+  s21::map<int, std::string> map = {{1, "one"}, {2, "two"}, {3, "three"}};
+  ASSERT_EQ(map.size(), 3);
+
+  map.clear();
+  ASSERT_EQ(map.size(), 0);
 }
 
 // вставка std::pair, если такой ключ есть то то не вставляет и возвращает false
@@ -305,6 +326,15 @@ TEST(Map, Merge) {
   //   EXPECT_EQ(m2.tree_in_map.root->val, "десять");
   //   EXPECT_EQ(m2.tree_in_map.max, 12);
   //   EXPECT_EQ(m2.tree_in_map.min, 1);
+}
+
+TEST(Map, Contains) {
+  s21::map<int, std::string> map;
+
+  map.insert({1, "one"});
+  map.insert({2, "two"});
+  EXPECT_TRUE(map.contains(2));
+  EXPECT_FALSE(map.contains(3));
 }
 
 int main(int argc, char **argv) {
