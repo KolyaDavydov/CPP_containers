@@ -159,6 +159,7 @@ TYPED_TEST(VectorTest, MoveAssign) {
 
 TYPED_TEST(VectorTest, MoveSelfAssign) {
     // по сути это уб
+    /*
     s21::Vector<TypeParam> original(5);
     original = std::move(original);
 
@@ -170,6 +171,7 @@ TYPED_TEST(VectorTest, MoveSelfAssign) {
 
     EXPECT_EQ(std_vec.size(), 0U);
     EXPECT_EQ(std_vec.capacity(), 0U);
+     */
 }
 
 //AT, [], front, back, empty
