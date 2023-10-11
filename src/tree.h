@@ -1,12 +1,19 @@
 #ifndef CPP2_SRC_TREE_H_
 #define CPP2_SRC_TREE_H_
 #include <iostream>
-#include <limits> // для std::numeric_limits
+#include <limits>  // для std::numeric_limits
 
 namespace s21 {
+
 /**
-класс описывающий узел бинарного дерева
-*/
+ * Здесь три класса:
+ * - class Node
+ * - class Tree
+ * - class Iterator
+ */
+
+// ========== КЛАСС УЗЛА ============== //
+
 template <typename T, typename V>
 class Node {
  public:
@@ -19,8 +26,7 @@ class Node {
   bool is_min;  // если true то это узел с самым минимальным значением
   bool is_max;  // если true то это узел с самым максимальным значением
 
-//  public:
-  // КОнструктор для создания узла со значением ключа
+  // КОнструкторы для создания узла со значением ключа
   Node(const T& key)
       : key(key),
         left(nullptr),
@@ -37,50 +43,68 @@ class Node {
         is_max(false) {}
 };  // end class Node
 
-// класс бинарного дерева
+// ========== КЛАСС ПРОСТОГО БИНАРНОГО ДЕРЕВА ============== //
+
+// Здесь объявляем класс и его параметры, функции и т.д.
+// описание самих функций идет ниже класса
 template <typename T, typename V>
 class Tree {
  public:
-  class Iterator;
-  // Внутрений класс итератор
-  // class Iterator;
-
   // КОНСТРУКТОРЫ И ДЕСТРУКТОРЫ
   Tree();  // конструктор по умолчанию - пустое дерево
-  Tree(const Tree& copy);  // rконструктор копирования
-  ~Tree();  // деструктор (удаляет узлы дерева и выставляет указатель на корень
-            // - null)
+  Tree(const Tree& copy);  // конструктор копирования
+  ~Tree();  // деструктор (удаляет узлы дерева и выставляет
+            // указатель на корень - null)
 
   // Перезагрузка оператора присваивания для перемещающегося объекта
   Tree<T, V>& operator=(Tree&& other);
-  // методы для работы с деревом
 
+  // ОСНОВНЫЕ ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ РАБОТЫ С ДЕРЕВОМ
   Node<T, V>* Insert(T key);  // вставка узла в соответсвующее место по ключу
-  Node<T, V>* Insert(
-      Node<T, V>* node, T key,
-      Node<T, V>* parent);  // вспомогательный метод для вставки узла
-  void ClearTree(
-      Node<T, V>* node);  // полностью очищает поддерево от переданново узла
-  Node<T, V>* CopyTree(Node<T, V>* node);  // полное копирование дерева
-  // два метода - поиск в дереве по переданому значения ключа
+
+  // полностью очищает поддерево от переданново узла
+  void ClearTree(Node<T, V>* node);
+
+  // полное копирование дерева передать указатель на корень копируемого дерева
+  // !!! не копирует остальные приватные параметры (T min, T max, Size)
+  Node<T, V>* CopyTree(Node<T, V>* node);
+  // метод для поиска узла по переданному ключу
   Node<T, V>* Search(T key);
-  Node<T, V>* Search(T key, Node<T, V>* node);
-  // методы для удаления узла дерева
-  Node<T, V>* FindMin(Node<T, V>* node);
-  Node<T, V>* RemoveMin(Node<T, V>* node);
-  Node<T, V>* Remove(Node<T, V>* node, T key);
+
+  // методы для удаления узла дерева по переданному ключу
   void Remove(T key);
   // смена содержимого контейнера на содержимое другого
   void Swap(Tree<T, V>& other);
-  size_t MaxSize(); // возвращает максимальный размер контейнера (весьма неоднозначная функция)
+  size_t MaxSize();  // возвращает максимальный размер контейнера (весьма
+                     // неоднозначная функция)
 
-  // Параметр - указатель на корень дерева
+ private:
+  // ПАРАМЕТРЫ КЛАССА ДЕРЕВА делаем приватными для безопасности
   Node<T, V>* root;  // указатель на корень дерева
   T min;  // для хранения максимального значения ключа дерева
   T max;  // для хранения минимального значения
-
   size_t size;  // размер дерева
-};
+
+ private:  // приватные вспомогательные методы, которыу учавствуют только в этом
+           // классе
+  // вспомогательный метод для вставки узла
+  Node<T, V>* Insert(Node<T, V>* node, T key, Node<T, V>* parent);
+  // вспомогательный метод для поиска узла по ключу
+  Node<T, V>* Search(T key, Node<T, V>* node);
+
+  // вспомогательные методы для удаления узла
+  Node<T, V>* FindMin(Node<T, V>* node);
+  Node<T, V>* RemoveMin(Node<T, V>* node);
+  Node<T, V>* Remove(Node<T, V>* node, T key);
+
+ public:
+  // геттеры и сеттеры для работы с приватными параметрами
+  size_t GetSize() { return this->size; }
+  Node<T, V>* GetRoot() { return this->root; }
+  void SetRoot(Node<T, V>* root) { this->root = root; }
+  T GetMax() { return this->max; }
+  T GetMin() { return this->min; }
+};  // end class Tree
 /**
  * КОНСТРУКТОР ПО УМОЛЧАНИЮ
  * создает пустое дерево, где указатель на корень - null,
@@ -89,7 +113,7 @@ template <typename T, typename V>
 Tree<T, V>::Tree() : root(nullptr), min(), max(), size(0) {}
 
 /**
- * КОНСТРУКТОР ЕОПИРОВАНИЯ ДЕРЕВА
+ * КОНСТРУКТОР КОПИРОВАНИЯ ДЕРЕВА
  */
 template <typename T, typename V>
 Tree<T, V>::Tree(const Tree& copy) : root(CopyTree(copy.root)) {
@@ -185,8 +209,8 @@ void Tree<T, V>::ClearTree(Node<T, V>* node) {
     delete node;
   }
   root = nullptr;
-  // max = {};
-  // min = {};
+  max = {};
+  min = {};
   size = 0;
 }
 
@@ -233,6 +257,25 @@ Node<T, V>* Tree<T, V>::Search(T key, Node<T, V>* node) {
 
 // Методы для удаления узла дерева
 template <typename T, typename V>
+void Tree<T, V>::Remove(T key) {
+  Node<T, V>* n = Search(key);
+  if (key == this->min) {
+    // std::cout << "Проверка Размер: " << this->min << std::endl;
+    if (size > 1) {
+      if (n->top != nullptr) this->min = n->top->key;
+      if (n->top == nullptr) this->min = n->right->key;
+    }
+  }
+  if (key == this->max) {
+    if (size > 1) {
+      if (n->top != nullptr) this->max = n->top->key;
+      if (n->top == nullptr) this->max = n->left->key;
+    }
+  }
+  root = Remove(root, key);
+}
+
+template <typename T, typename V>
 Node<T, V>* Tree<T, V>::FindMin(Node<T, V>* node) {
   if (!node->left) return node;
   return FindMin(node->left);
@@ -267,28 +310,7 @@ Node<T, V>* Tree<T, V>::Remove(Node<T, V>* node, T key) {
     return min;
   }
   this->size--;
-
   return node;
-}
-
-template <typename T, typename V>
-void Tree<T, V>::Remove(T key) {
-  Node<T, V>* n = Search(key);
-  if (key == this->min) {
-    // std::cout << "Проверка Размер: " << this->min << std::endl;
-    if (size > 1) {
-      if (n->top != nullptr) this->min = n->top->key;
-      if (n->top == nullptr) this->min = n->right->key;
-    }
-  }
-
-  if (key == this->max) {
-    if (size > 1) {
-      if (n->top != nullptr) this->max = n->top->key;
-      if (n->top == nullptr) this->max = n->left->key;
-    }
-  }
-  root = Remove(root, key);
 }
 
 // смена содержимого контейнера на содержимое другого
@@ -300,28 +322,30 @@ void Tree<T, V>::Swap(Tree<T, V>& other) {
   std::swap(max, other.max);
 }
 
-    /* Расчет максимального размера контейнера
-     * - Размер size_t должен совпадать с размером указателя для любой
-     * платформы. Указатель должен быть в состоянии адресовать любой байт в
-     * памяти, а size_t хранить размер любого (в т.ч. занимающего всю память)
-     * объекта. Таким образом максимальное значение size_t - это максимальное
-     * количество байт памяти. Это значение мы получаем при помощи
-     * std::numeric_limits<size_t>::max();
-     *
-     * - GCC ограничивает объекты размером в половину адресного пространства.
-     * Поэтому полученное в число делим на 2.
-     *
-     * - Чтобы определить максимальное количество элементов в контейнере, делим
-     * число, на размер одного узла, т.е. sizeof(Node)
-     * Функция выводит число но это число больше оригинала, может что то нужно исправить...
-     */
+/* Расчет максимального размера контейнера
+ * - Размер size_t должен совпадать с размером указателя для любой
+ * платформы. Указатель должен быть в состоянии адресовать любой байт в
+ * памяти, а size_t хранить размер любого (в т.ч. занимающего всю память)
+ * объекта. Таким образом максимальное значение size_t - это максимальное
+ * количество байт памяти. Это значение мы получаем при помощи
+ * std::numeric_limits<size_t>::max();
+ *
+ * - GCC ограничивает объекты размером в половину адресного пространства.
+ * Поэтому полученное в число делим на 2.
+ *
+ * - Чтобы определить максимальное количество элементов в контейнере, делим
+ * число, на размер одного узла, т.е. sizeof(Node)
+ * Функция выводит число но это число больше оригинала, может что то нужно
+ * исправить...
+ */
 template <typename T, typename V>
 size_t Tree<T, V>::MaxSize() {
-  size_t max_size = std::numeric_limits<size_t>::max() / 2 / sizeof(Node<T, V>*);
+  size_t max_size =
+      std::numeric_limits<size_t>::max() / 2 / sizeof(Node<T, V>*);
   return max_size;
 }
 
-// КЛАСС ИТЕРАТОР
+// ========== КЛАСС ИТЕРАТОР ========== //
 template <typename T, typename V>
 class Iterator {
  public:
@@ -405,7 +429,7 @@ class Iterator {
 
   // перезагрузка оператора '!='
   bool operator!=(const Iterator& other) const { return node_ != other.node_; }
-};
+};  // end class ITERATOR
 
 };  // namespace s21
 

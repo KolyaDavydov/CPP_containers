@@ -43,10 +43,10 @@ class map {
   iterator begin();
   iterator end();
 
-  void clear();   // очищает словарь
-  bool empty();   // возвращает true, если контейнер пустой
-  size_type size(); // возвращает размер контейнера
-  size_type max_size();   // возвращает максимальный размер контейнера
+  void clear();  // очищает словарь
+  bool empty();  // возвращает true, если контейнер пустой
+  size_type size();  // возвращает размер контейнера
+  size_type max_size();  // возвращает максимальный размер контейнера
 
   // методы для изменения контейнера
 
@@ -130,7 +130,7 @@ typename map<T, V>::mapped_type& map<T, V>::operator[](const T& key) {
 
 template <typename T, typename V>
 bool map<T, V>::empty() {
-  if (this->tree_in_map.size == 0) {
+  if (this->tree_in_map.GetSize() == 0) {
     return true;
   } else {
     return false;
@@ -139,7 +139,7 @@ bool map<T, V>::empty() {
 
 template <typename T, typename V>
 typename map<T, V>::size_type map<T, V>::size() {
-  return this->tree_in_map.size;
+  return this->tree_in_map.GetSize();
 }
 
 template <typename T, typename V>
@@ -150,27 +150,27 @@ typename map<T, V>::size_type map<T, V>::max_size() {
 // методы для итеррирования по элементам контейнера
 template <typename T, typename V>
 typename map<T, V>::iterator map<T, V>::begin() {
-  Node<T, V>* node = this->tree_in_map.root;
+  Node<T, V>* node = this->tree_in_map.GetRoot();
   while (node->left != nullptr) {
     node = node->left;
   }
-  return iterator(node, tree_in_map.root);
+  return iterator(node, tree_in_map.GetRoot());
 }
 
 template <typename T, typename V>
 typename map<T, V>::iterator map<T, V>::end() {
-  Node<T, V>* node = tree_in_map.root;
+  Node<T, V>* node = tree_in_map.GetRoot();
   while (node->right != nullptr) {
     node = node->right;
   }
-  return iterator(node, tree_in_map.root);
+  return iterator(node, tree_in_map.GetRoot());
 }
 
 // методы для изменения контейнера
 
 template <typename T, typename V>
 void map<T, V>::clear() {
-  this->tree_in_map.ClearTree(tree_in_map.root);
+  this->tree_in_map.ClearTree(tree_in_map.GetRoot());
 }
 
 // вставляет узел и возвращает итератор туда, где находится элемент в
@@ -183,14 +183,14 @@ std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert(
   // false>
   if (check_unique(value)) {
     auto r = this->tree_in_map.Search(value.first);
-    return std::make_pair(iterator(r, tree_in_map.root), false);
+    return std::make_pair(iterator(r, tree_in_map.GetRoot()), false);
   }
 
   // если нет такого ключа в словаре то вставляем этот ключ
   this->tree_in_map.Insert(value.first);
   auto r = this->tree_in_map.Search(value.first);
   r->val = value.second;
-  return std::make_pair(iterator(r, tree_in_map.root), true);
+  return std::make_pair(iterator(r, tree_in_map.GetRoot()), true);
 }
 
 template <typename T, typename V>
@@ -206,13 +206,13 @@ std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert_or_assign(
   if (check_unique(std::make_pair(key, obj))) {
     auto r = this->tree_in_map.Search(key);
     r->val = obj;
-    return std::make_pair(iterator(r, tree_in_map.root), true);
+    return std::make_pair(iterator(r, tree_in_map.GetRoot()), true);
   }
   // если нет такого ключа в словаре то вставляем этот ключ и значение obj
   this->tree_in_map.Insert(key);
   auto r = this->tree_in_map.Search(key);
   r->val = obj;
-  return std::make_pair(iterator(r, tree_in_map.root), true);
+  return std::make_pair(iterator(r, tree_in_map.GetRoot()), true);
 }
 
 template <typename T, typename V>
@@ -254,7 +254,7 @@ bool map<T, V>::contains(const T& key) {
 // возвращает false, если ключа нет
 template <typename T, typename V>
 bool map<T, V>::check_unique(const value_type& value) {
-  if (this->tree_in_map.size > 0) {
+  if (this->size() > 0) {
     iterator i = this->begin();
 
     do {
