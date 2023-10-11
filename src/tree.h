@@ -1,5 +1,6 @@
 #ifndef CPP2_SRC_TREE_H_
 #define CPP2_SRC_TREE_H_
+
 #include <iostream>
 #include <limits>  // для std::numeric_limits
 
@@ -431,6 +432,6 @@ class Iterator {
   bool operator!=(const Iterator& other) const { return node_ != other.node_; }
 };  // end class ITERATOR
 
-};  // namespace s21
+};  // end namespace s21
 
 #endif  // CPP2_SRC_TREE_H_

@@ -4,11 +4,11 @@ LINUX = -lsubunit -lrt -lpthread -lm
 VALGRIND_FLAGS = --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all --verbose
 OS = $(shell uname -s)
 
-TEST_SRC = *.cc
+TEST_SRC = all_tests/*.cc
 OBJ = $(SRC:.cc=.o)
 
 ifeq ($(OS), Linux)
-	LIBS += #-lgmock -pthread
+	LIBS += -lgmock -pthread
 endif
 
 all: clean valgrind
@@ -29,6 +29,7 @@ test: clean
 	$(GCC) $(TEST_SRC) -o test $(LIBS)
 	./test --gtest_repeat=10 --gtest_break_on_failure
 
+# ТОЛько для линукс
 valgrind: clean
 	$(GCC) $(TEST_SRC) -o test $(LIBS) $(LINUX)
 	CK_FORK=no valgrind $(VALGRIND_FLAGS) --log-file=RESULT_VALGRIND.txt ./test
@@ -39,12 +40,15 @@ gcov_report: clean
 	./test
 	lcov -t "test" -o test.info --no-external -c -d .
 	genhtml -o report/ test.info
+
 	open ./report/index.html
 
 clang:
 	cp ../materials/linters/.clang-format ../src/.clang-format
-	clang-format -style=Google -i *.cc *.h
-	clang-format -style=Google -n *.cc *.h
+	clang-format -style=Google -i all_tests/*.cc
+	clang-format -style=Google -i *.h
+	clang-format -style=Google -n all_tests/*.cc
+	clang-format -style=Google -n *.h
 	rm .clang-format
 
 clean:
