@@ -1,6 +1,6 @@
 #ifndef CPP2_SRC_S21_SET_H_
 #define CPP2_SRC_S21_SET_H_
-#include "tree.h"
+#include "tree_set.h"
 
 namespace s21 {
 
@@ -38,15 +38,18 @@ class set {
       tree_ = nullptr;
     }
 
-    // methods
+        std::pair<iterator, bool> insert(const value_type &value) {
+      return tree_->Insert(value);
+    }
+    // iterators
 
-    iterator begin() noexcept { return iterator(); }
+    iterator begin() noexcept { return tree_->begin(); }
 
-    const_iterator begin() const noexcept { return const_iterator(); }
+    const_iterator begin() const noexcept { return tree_->begin(); }
 
-    iterator end() noexcept { return iterator(); }
+    iterator end() noexcept { return tree_->end(); }
 
-    const_iterator end() const noexcept { return const_iterator(); }
+    const_iterator end() const noexcept { return tree_->end(); }
 
     iterator find(const key_type &key) noexcept { return tree_->Search(key); }
 
