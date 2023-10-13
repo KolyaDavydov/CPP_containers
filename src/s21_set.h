@@ -45,7 +45,7 @@ class set {
     // tree_ = nullptr;
   }
 
-  std::pair<iterator, bool> insert(const node_type &value);
+  std::pair<iterator, bool> insert(const key_type &value);
   // std::pair<iterator, bool> insert(const node_type &value) {
   //   return tree_.Insert(value);
   // }
@@ -132,18 +132,18 @@ class set {
 
 template <typename Key>
 std::pair<typename set<Key>::iterator, bool> set<Key>::insert(
-    const node_type &value) {
+    const key_type &value) {
   // если value есть в словаре то возвращем пару: <Итератор на это значение,
   //  false>
   if (check_unique(value)) {
-    auto r = this->tree_.Search(value.first);
+    auto r = this->tree_.Search(value);
     return std::make_pair(iterator(r, tree_.GetRoot()), false);
   }
 
   // если нет такого ключа в словаре то вставляем этот ключ
-  this->tree_.Insert(value.first);
-  auto r = this->tree_.Search(value.first);
-  r->val = value.second;
+  this->tree_.Insert(value);
+  auto r = this->tree_.Search(value);
+  r->val = value;
   return std::make_pair(iterator(r, tree_.GetRoot()), true);
 }
 
