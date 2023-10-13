@@ -124,7 +124,7 @@ class set {
 
   size_type max_size() const noexcept { return this->tree_.MaxSize(); }
 
-  bool check_unique(const node_type &value);
+  bool check_unique(const value_type &value);
 
  private:
   tree_type tree_;
@@ -152,12 +152,12 @@ std::pair<typename set<Key>::iterator, bool> set<Key>::insert(
 // проверяет что переданного ключа нет в словаре
 // возвращает false, если ключа нет
 template <typename Key>
-bool set<Key>::check_unique(const node_type &value) {
+bool set<Key>::check_unique(const value_type &value) {
   if (this->size() > 0) {
     iterator i = this->begin();
 
     do {
-      if (value.first == i.node_->key) {
+      if (value == i.node_->key) {
         return true;
       }
       i++;
