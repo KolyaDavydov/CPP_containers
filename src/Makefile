@@ -14,6 +14,10 @@ endif
 
 all: clean valgrind
 
+# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ТЕСТИРОВАНИЯ s21_set.h
+st: clean
+	$(GCC) s21_test_set.cc -o test $(LIBS)
+	./test
 # ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ПРОВЕРКИ КОМПИЛЯЦИИ tree.h
 main: clean
 	$(GCC) main.cpp -o main
