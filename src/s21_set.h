@@ -20,33 +20,17 @@ class set {
   using node_type = std::pair<const key_type, value_type>;
   using iterator = Iterator<key_type, value_type>;
   using const_iterator = Iterator<key_type, value_type>;
-  // using iterator = SetIterator<Key>;
-  // using const_iterator = SetConstIterator<Key>;
   using size_type = std::size_t;
 
-  // tree_type *tree_;
   set() : tree_() {}
 
-  set(std::initializer_list<value_type> const &items) {
-    for (value_type i : items) insert(i);
-  }
+  set(const set &other) : tree_(other.tree_) {}
+  set(set &&other) : tree_(std::move(*other.tree_)) { other.clear(); }
 
-  set(const set &v) {}
+  ~set() {}
 
-  // set(const set &other) : tree_(new tree_type(*other.tree_)) {}
-
-  // set(set &&other) noexcept : tree_(new tree_type(std::move(*other.tree_)))
-  // {}
-
-  // set(set &&v) noexcept {}
-
-  ~set() {
-    // delete tree_;
-    // tree_ = nullptr;
-  }
-
-  std::pair<iterator, bool> insert(const key_type &value);
-  // std::pair<iterator, bool> insert(const node_type &value) {
+  std::pair<iterator, bool> insert(const value_type &value);
+  // std::pair<iterator, bool> insert(const key_type &value) {
   //   return tree_.Insert(value);
   // }
 
@@ -54,7 +38,9 @@ class set {
   //     const key_type &key) {
   //   return insert(std::pair<key_type, node_type>(key, key));
   // }
-
+  set(std::initializer_list<value_type> const &items) : set() {
+    for (value_type i : items) insert(i);
+  }
   // iterators
 
   iterator begin() noexcept {
@@ -93,6 +79,15 @@ class set {
 
   const_iterator find(const key_type &key) const { return tree_.Search(key); }
 
+  // bool contains(const Key &key) {
+  //   Node<key_type, value_type> *node = this->tree_.Search(key);
+  //   if (node != nullptr) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
+
   void clear() { tree_.ClearTree(tree_.GetRoot()); };
 
   // operator overload
@@ -106,11 +101,23 @@ class set {
     *tree_ = std::move(*other.tree_);
     return *this;
   }
-  // void erase(iterator pos);
+  void erase(iterator pos) {
+    if (pos.root_ != nullptr) {
+      this->tree_.Remove(pos.node_->key);
+    }
+  }
 
-  // void swap(set & other);
+  void swap(set &other) { tree_.Swap(other.tree_); }
 
-  // void merge(set & other);
+  void merge(set &other) {
+    iterator iter = other.begin();
+    while (iter != other.end()) {
+      this->insert(iter.node_->key, iter.node_->val);
+
+      iter++;
+    }
+    this->insert(iter.node_->key, iter.node_->val);
+  }
 
   bool empty() {
     if (this->tree_.GetSize() == 0) {
@@ -120,9 +127,9 @@ class set {
     }
   }
 
-  size_type size() const noexcept { return this->tree_.GetSize(); }
+  size_type size() noexcept { return this->tree_.GetSize(); }
 
-  size_type max_size() const noexcept { return this->tree_.MaxSize(); }
+  size_type max_size() noexcept { return this->tree_.MaxSize(); }
 
   bool check_unique(const value_type &value);
 
@@ -132,7 +139,7 @@ class set {
 
 template <typename Key>
 std::pair<typename set<Key>::iterator, bool> set<Key>::insert(
-    const key_type &value) {
+    const value_type &value) {
   // если value есть в словаре то возвращем пару: <Итератор на это значение,
   //  false>
   if (check_unique(value)) {
