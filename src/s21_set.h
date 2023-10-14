@@ -25,11 +25,25 @@ class set {
   set() : tree_() {}
 
   set(const set &other) : tree_(other.tree_) {}
-  set(set &&other) : tree_(std::move(*other.tree_)) { other.clear(); }
+  set(set &&other) : tree_(std::move(other.tree_)) { other.clear(); }
 
   ~set() {}
 
-  std::pair<iterator, bool> insert(const value_type &value);
+  std::pair<iterator, bool> insert(const value_type &value) {
+    // если value есть в словаре то возвращем пару: <Итератор на это значение,
+    //  false>
+    if (check_unique(value)) {
+      auto r = this->tree_.Search(value);
+      return std::make_pair(iterator(r, tree_.GetRoot()), false);
+    }
+
+    // если нет такого ключа в словаре то вставляем этот ключ
+    this->tree_.Insert(value);
+    auto r = this->tree_.Search(value);
+    r->val = value;
+    return std::make_pair(iterator(r, tree_.GetRoot()), true);
+  }
+
   // std::pair<iterator, bool> insert(const key_type &value) {
   //   return tree_.Insert(value);
   // }
@@ -38,6 +52,7 @@ class set {
   //     const key_type &key) {
   //   return insert(std::pair<key_type, node_type>(key, key));
   // }
+
   set(std::initializer_list<value_type> const &items) : set() {
     for (value_type i : items) insert(i);
   }
@@ -94,11 +109,11 @@ class set {
   void merge(set &other) {
     iterator iter = other.begin();
     while (iter != other.end()) {
-      this->insert(iter.node_->key, iter.node_->val);
+      this->insert(iter.node_->key);
 
       iter++;
     }
-    this->insert(iter.node_->key, iter.node_->val);
+    this->insert(iter.node_->key);
   }
 
   bool empty() {
@@ -133,6 +148,8 @@ class set {
     }
   }
 
+  Tree<key_type, value_type> GetTree() { return this->tree_; }
+
  private:
   tree_type tree_;
 
@@ -153,24 +170,6 @@ class set {
     return false;
   }
 };
-
-template <typename Key>
-std::pair<typename set<Key>::iterator, bool> set<Key>::insert(
-    const value_type &value) {
-  // если value есть в словаре то возвращем пару: <Итератор на это значение,
-  //  false>
-  if (check_unique(value)) {
-    auto r = this->tree_.Search(value);
-    return std::make_pair(iterator(r, tree_.GetRoot()), false);
-  }
-
-  // если нет такого ключа в словаре то вставляем этот ключ
-  this->tree_.Insert(value);
-  auto r = this->tree_.Search(value);
-  r->val = value;
-  return std::make_pair(iterator(r, tree_.GetRoot()), true);
-}
-
 }  // namespace s21
 
 #endif  // CPP2_SRC_S21_SET_H_
