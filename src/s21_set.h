@@ -41,6 +41,7 @@ class set {
   set(std::initializer_list<value_type> const &items) : set() {
     for (value_type i : items) insert(i);
   }
+
   // iterators
 
   iterator begin() noexcept {
@@ -79,31 +80,12 @@ class set {
 
   const_iterator find(const key_type &key) const { return tree_.Search(key); }
 
-  // bool contains(const Key &key) {
-  //   Node<key_type, value_type> *node = this->tree_.Search(key);
-  //   if (node != nullptr) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  void clear() { tree_.ClearTree(tree_.GetRoot()); };
-
-  // operator overload
-
-  set &operator=(const set &other) {
-    *tree_ = *other.tree_;
-    return *this;
-  }
-
-  set &operator=(set &&other) noexcept {
-    *tree_ = std::move(*other.tree_);
-    return *this;
-  }
-  void erase(iterator pos) {
-    if (pos.root_ != nullptr) {
-      this->tree_.Remove(pos.node_->key);
+  bool contains(const Key &key) {
+    Node<key_type, value_type> *node = this->tree_.Search(key);
+    if (node != nullptr) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -131,10 +113,45 @@ class set {
 
   size_type max_size() noexcept { return this->tree_.MaxSize(); }
 
-  bool check_unique(const value_type &value);
+  void clear() { tree_.ClearTree(tree_.GetRoot()); };
+
+  // operator overload
+
+  set &operator=(const set &other) {
+    *tree_ = *other.tree_;
+    return *this;
+  }
+
+  set &operator=(set &&other) noexcept {
+    *tree_ = std::move(*other.tree_);
+    return *this;
+  }
+
+  void erase(iterator pos) {
+    if (pos.root_ != nullptr) {
+      this->tree_.Remove(pos.node_->key);
+    }
+  }
 
  private:
   tree_type tree_;
+
+  // Вспомогательные методы
+  // проверяет что переданного ключа нет в словаре
+  // возвращает false, если ключа нет
+  bool check_unique(const value_type &value) {
+    if (this->size() > 0) {
+      iterator i = this->begin();
+
+      do {
+        if (value == i.node_->key) {
+          return true;
+        }
+        i++;
+      } while (i.node_->is_max == false);
+    }
+    return false;
+  }
 };
 
 template <typename Key>
@@ -154,24 +171,6 @@ std::pair<typename set<Key>::iterator, bool> set<Key>::insert(
   return std::make_pair(iterator(r, tree_.GetRoot()), true);
 }
 
-// Вспомогательные методы
-
-// проверяет что переданного ключа нет в словаре
-// возвращает false, если ключа нет
-template <typename Key>
-bool set<Key>::check_unique(const value_type &value) {
-  if (this->size() > 0) {
-    iterator i = this->begin();
-
-    do {
-      if (value == i.node_->key) {
-        return true;
-      }
-      i++;
-    } while (i.node_->is_max == false);
-  }
-  return false;
-}
 }  // namespace s21
 
 #endif  // CPP2_SRC_S21_SET_H_
