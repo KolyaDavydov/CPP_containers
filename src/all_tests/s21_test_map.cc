@@ -8,14 +8,14 @@
 
 TEST(Map, DefaultConstructor) {
   s21::map<int, int> m;
-  ASSERT_EQ(m.tree_in_map.GetRoot(), nullptr);
+  ASSERT_EQ(m.GetTree().GetRoot(), nullptr);
 }
 
 TEST(Map, InitializerListConstructor) {
   s21::map<int, std::string> m{{1, "one"}, {2, "two"}, {3, "three"}};
   EXPECT_EQ(m.size(), 3);
-  EXPECT_EQ(m.tree_in_map.GetRoot()->key, 1);
-  EXPECT_EQ(m.tree_in_map.GetRoot()->val, "one");
+  EXPECT_EQ(m.GetTree().GetRoot()->key, 1);
+  EXPECT_EQ(m.at(1), "one");
 }
 
 TEST(Map, CopyConstructor) {
@@ -23,6 +23,13 @@ TEST(Map, CopyConstructor) {
   s21::map<int, int> m2(m1);
   EXPECT_EQ(m1.size(), 5);
   EXPECT_EQ(m2.size(), 5);
+}
+
+TEST(Map, MoveConstuctor) {
+  s21::map<int, int> s1 = {{2, 2}, {3, 3}, {4, 4}, {5, 5}, {1, 1}};
+  s21::map<int, int> s2(std::move(s1));
+  EXPECT_EQ(s2.size(), 5);
+  EXPECT_EQ(s1.size(), 0);
 }
 
 TEST(Map, Size_Empty) {
@@ -78,8 +85,8 @@ TEST(Map, InsertPair1) {
 
   EXPECT_EQ(m1.insert(1, 3).second, m2.insert(2, 3).second);
   EXPECT_EQ(m1.size(), m2.size());
-  EXPECT_EQ(m1.tree_in_map.GetRoot()->key, 1);
-  EXPECT_EQ(m2.tree_in_map.GetRoot()->key, 2);
+  EXPECT_EQ(m1.GetTree().GetRoot()->key, 1);
+  EXPECT_EQ(m2.GetTree().GetRoot()->key, 2);
 }
 
 TEST(Map, Insert_or_assign) {
@@ -87,11 +94,11 @@ TEST(Map, Insert_or_assign) {
   m1.insert_or_assign(1, "один");
   m1.insert_or_assign(2, "два");
   EXPECT_EQ(m1.size(), 2);
-  EXPECT_EQ(m1.tree_in_map.GetRoot()->val, "один");
+  EXPECT_EQ(m1.at(1), "один");
 
   m1.insert_or_assign(1, "уже не один");
   EXPECT_EQ(m1.size(), 2);
-  EXPECT_EQ(m1.tree_in_map.GetRoot()->val, "уже не один");
+  EXPECT_EQ(m1.at(1), "уже не один");
 }
 
 TEST(Map, Erase_and_Begin) {
@@ -101,7 +108,7 @@ TEST(Map, Erase_and_Begin) {
   m1.insert_or_assign(2, "два");
   m1.insert_or_assign(12, "двенадцать");
   EXPECT_EQ(m1.size(), 4);
-  EXPECT_EQ(m1.tree_in_map.GetRoot()->val, "десять");
+  EXPECT_EQ(m1.at(10), "десять");
 
   auto iter = m1.begin();
   EXPECT_EQ(iter.node_->key, 1);
@@ -127,9 +134,9 @@ TEST(Map, Swap) {
   m1.swap(m2);
   EXPECT_EQ(m1.size(), 0);
   EXPECT_EQ(m2.size(), 4);
-  EXPECT_EQ(m2.tree_in_map.GetRoot()->val, "десять");
-  EXPECT_EQ(m2.tree_in_map.GetMax(), 12);
-  EXPECT_EQ(m2.tree_in_map.GetMin(), 1);
+  EXPECT_EQ(m2.at(10), "десять");
+  EXPECT_EQ(m2.GetTree().GetMax(), 12);
+  EXPECT_EQ(m2.GetTree().GetMin(), 1);
 }
 
 TEST(Map, Merge) {

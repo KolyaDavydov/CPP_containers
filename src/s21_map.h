@@ -33,9 +33,12 @@ class map {
   ~map();
 
   // ПАРАМЕТРЫ
+ private:
   Tree<key_type, mapped_type> tree_in_map;
-  // iterator* iter;
 
+ public:
+  // геттер к доступу параметра дерева
+  Tree<key_type, mapped_type> GetTree() { return this->tree_in_map; }
   map<T, V> operator=(map&& m);
   mapped_type& at(const T& key);
   mapped_type& operator[](const T& key);
@@ -87,7 +90,9 @@ template <typename T, typename V>
 map<T, V>::map(const map& m) : tree_in_map(m.tree_in_map) {}
 
 template <typename T, typename V>
-map<T, V>::map(map&& m) : tree_in_map(std::move(m.tree_in_map)) {}
+map<T, V>::map(map&& m) : tree_in_map(std::move(m.tree_in_map)) {
+  m.clear();
+}
 
 template <typename T, typename V>
 map<T, V>::~map() {}
