@@ -19,7 +19,7 @@ class map {
   using size_type = size_t;
 
   // КОНСТРУКТОРЫ И ДЕСТРУКТОРЫ
-  //создает пустой словарь
+  // создает пустой словарь
   map();
 
   // Конструктор - создает словарь с переданными списками
@@ -62,10 +62,10 @@ class map {
   // удаление узла
   void erase(iterator pos);
 
-  //смена содержимого контейнера на другое
+  // смена содержимого контейнера на другое
   void swap(map& other);
 
-  //слияние передаваемого словаря в первый
+  // слияние передаваемого словаря в первый
   void merge(map& other);
 
   bool contains(const T& key);
@@ -185,8 +185,8 @@ void map<T, V>::clear() {
 template <typename T, typename V>
 std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert(
     const value_type& value) {
-  //если value есть в словаре то возвращем пару: <Итератор на это значение,
-  // false>
+  // если value есть в словаре то возвращем пару: <Итератор на это значение,
+  //  false>
   if (check_unique(value)) {
     auto r = this->tree_in_map.Search(value.first);
     return std::make_pair(iterator(r, tree_in_map.GetRoot()), false);
@@ -208,7 +208,7 @@ std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert(
 template <typename T, typename V>
 std::pair<typename map<T, V>::iterator, bool> map<T, V>::insert_or_assign(
     const key_type& key, const mapped_type& obj) {
-  //если елюч уже есть
+  // если елюч уже есть
   if (check_unique(std::make_pair(key, obj))) {
     auto r = this->tree_in_map.Search(key);
     r->val = obj;

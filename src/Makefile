@@ -1,6 +1,7 @@
 GCC = g++ -std=c++17 -Wall -Wextra -Werror
 LIBS = -lgtest
 LINUX = -lsubunit -lrt -lpthread -lm
+DEBUG = -fsanitize=address
 VALGRIND_FLAGS = --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all --verbose
 OS = $(shell uname -s)
 
@@ -13,6 +14,10 @@ endif
 
 all: clean valgrind
 
+# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ТЕСТИРОВАНИЯ s21_set.h
+st: clean
+	$(GCC) s21_test_set.cc -o test $(LIBS)
+	./test
 # ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ПРОВЕРКИ КОМПИЛЯЦИИ tree.h
 main: clean
 	$(GCC) main.cpp -o main
@@ -26,7 +31,7 @@ vt: clean mt
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --log-file=RESULT_VALGRIND.txt ./test
 
 test: clean
-	$(GCC) $(TEST_SRC) -o test $(LIBS)
+	$(GCC) $(DEBUG) $(TEST_SRC) -o test $(LIBS)
 	./test --gtest_repeat=10 --gtest_break_on_failure
 
 # ТОЛько для линукс
