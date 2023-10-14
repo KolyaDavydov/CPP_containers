@@ -45,14 +45,11 @@ TEST(Set, InsertMany) {
 
 TEST(Set, Size_Empty) {
   s21::set<std::string> empty_set;
-  s21::set<std::string> set33 = {"one",
-                                 "two"
-                                 "three"};
+  s21::set<std::string> set33 = {"one", "two", "three"};
 
   EXPECT_TRUE(empty_set.empty());
   EXPECT_EQ(empty_set.size(), 0);
-  std::cout << set33.GetTree().GetRoot()->key << std::endl;
-
+  // std::cout << set33.GetTree().GetRoot()->key << std::endl;
   EXPECT_FALSE(set33.empty());
   EXPECT_EQ(set33.size(), 3);
 }
@@ -65,22 +62,21 @@ TEST(Set, Clear) {
   ASSERT_EQ(set.size(), 0);
 }
 
-// вставка std::pair, если такой ключ есть то то не вставляет и возвращает false
+// вставка, если такой ключ есть то то не вставляет и возвращает false
 TEST(Set, InsertPair) {
   s21::set<int> set11;
   s21::set<int> set12;
   int ins = 3;
-  EXPECT_EQ(set11.insert(ins), set12.insert(ins));
+  EXPECT_EQ(set11.insert(ins).second, set12.insert(ins).second);
   EXPECT_EQ(set11.size(), set12.size());
 }
 
-// вставка пары (key, value), если такой ключ есть то то не вставляет и
-// возвращает false
+// вставка, если такой ключ есть то то не вставляет и возвращает false
 TEST(Set, InsertPair1) {
   s21::set<int> set14;
   s21::set<int> set24;
 
-  EXPECT_EQ(set14.insert(3), set24.insert(3));
+  EXPECT_EQ(set14.insert(3).second, set24.insert(3).second);
   EXPECT_EQ(set14.size(), set24.size());
   EXPECT_EQ(set14.GetTree().GetRoot()->key, 3);
   EXPECT_EQ(set24.GetTree().GetRoot()->key, 3);
