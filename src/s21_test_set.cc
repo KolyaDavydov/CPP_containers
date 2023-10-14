@@ -95,14 +95,14 @@ TEST(Set, Erase_and_Begin) {
   EXPECT_EQ(m1.size(), 4);
 
   auto iter = m1.begin();
-  EXPECT_EQ(iter.node_->key, "один");
+  EXPECT_EQ(iter.node_->key, "два");
 
   auto iter2 = m1.end();
-  EXPECT_EQ(iter2.node_->key, "двенадцать");
+  EXPECT_EQ(iter2.node_->key, "один");
 
   m1.erase(iter);
   EXPECT_EQ(m1.size(), 3);
-  EXPECT_EQ(m1.begin().node_->key, "два");
+  EXPECT_EQ(m1.begin().node_->key, "двенадцать");
 }
 
 TEST(Set, Swap) {
