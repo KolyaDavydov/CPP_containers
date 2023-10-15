@@ -44,15 +44,6 @@ class set {
     return std::make_pair(iterator(r, tree_.GetRoot()), true);
   }
 
-  // std::pair<iterator, bool> insert(const key_type &value) {
-  //   return tree_.Insert(value);
-  // }
-
-  // std::pair<typename set<key_type>::iterator, bool> set<key_type>::insert(
-  //     const key_type &key) {
-  //   return insert(std::pair<key_type, node_type>(key, key));
-  // }
-
   set(std::initializer_list<value_type> const &items) : set() {
     for (value_type i : items) insert(i);
   }
