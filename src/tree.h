@@ -119,13 +119,9 @@ Tree<T, V>::Tree() : root(nullptr), min(), max(), size(0) {}
 template <typename T, typename V>
 Tree<T, V>::Tree(const Tree& copy) : root(CopyTree(copy.root)) {
   this->size = copy.size;
-  if (size == 0) {
-    this->max = copy.max;
-    this->min = copy.min;
-  } else {
-    this->max = copy.max;
-    this->min = copy.min;
-  }
+
+  this->max = copy.max;
+  this->min = copy.min;
 }
 
 /**
@@ -136,7 +132,7 @@ Tree<T, V>::Tree(const Tree& copy) : root(CopyTree(copy.root)) {
 template <typename T, typename V>
 Tree<T, V>::~Tree() {
   ClearTree(root);
-  root = nullptr;
+  // root = nullptr;
 }
 
 // оператор присваивания переносом
