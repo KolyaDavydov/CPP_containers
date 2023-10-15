@@ -8,33 +8,19 @@ OS = $(shell uname -s)
 TEST_SRC = all_tests/*.cc
 OBJ = $(SRC:.cc=.o)
 
+.PHONY: all test valgrind gcov_report clang clean
+
 ifeq ($(OS), Linux)
 	LIBS += -lgmock -pthread
 endif
 
-all: clean valgrind
-
-# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ТЕСТИРОВАНИЯ s21_set.h
-st: clean
-	$(GCC) s21_test_set.cc -o test $(LIBS)
-	./test
-# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ПРОВЕРКИ КОМПИЛЯЦИИ tree.h
-main: clean
-	$(GCC) main.cpp -o main
-	./main
-# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ ТЕСТИРОВАНИЯ tree.h
-mt: clean
-	$(GCC) tree_test.cc -o test $(LIBS)
-	./test
-# ВРЕМЕННАЯ ЦЕЛЬ ДЛЯ УТЕЧЕК tree.h
-vt: clean mt
-	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --log-file=RESULT_VALGRIND.txt ./test
+all: clean
 
 test: clean
-	$(GCC) $(DEBUG) $(TEST_SRC) -o test $(LIBS)
+	$(GCC) $(TEST_SRC) -o test $(LIBS)
 	./test --gtest_repeat=10 --gtest_break_on_failure
 
-# ТОЛько для линукс
+# Только для линукс
 valgrind: clean
 	$(GCC) $(TEST_SRC) -o test $(LIBS) $(LINUX)
 	CK_FORK=no valgrind $(VALGRIND_FLAGS) --log-file=RESULT_VALGRIND.txt ./test
